@@ -1,0 +1,1 @@
+Always ask questions using the available tools to clarify the user's request before editing. This will help ensure that you understand the user's needs and can provide a more accurate and helpful response.

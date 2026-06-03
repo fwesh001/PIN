@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// --- ENUMS ---
+
+enum Role {
+  READER
+  AUTHOR
+  REVIEWER
+  EDITOR
+}
+
+enum ArticleStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  REJECTED
+  PUBLISHED
+}
+
+enum ReviewStatus {
+  PENDING
+  ACCEPTED
+  COMPLETED
+  DECLINED
+}
+
+enum RecommendationScore {
+  ACCEPT
+  MINOR_REVISIONS
+  REJECT
+}
+
+enum IssueStatus {
+  DRAFT
+  PUBLISHED
+}
+
+// --- MODELS ---
+
+model User {
+  id                String             @id @default(uuid()) @db.Uuid
+  email             String             @unique
+  name              String
+  role              Role               @default(READER)
+  affiliation       String?
+  createdAt         DateTime           @default(now())
+  
+  // Relations
+  articles          Article[]          @relation("AuthorArticles")
+  reviewAssignments ReviewAssignment[] @relation("ReviewerAssignments")
+}
+
+model Article {
+  id                String             @id @default(uuid()) @db.Uuid
+  title             String
+  abstract          String             @db.Text
+  keywords          String[]
+  pdfUrl            String
+  status            ArticleStatus      @default(SUBMITTED)
+  doi               String?            @unique
+  authorId          String             @db.Uuid
+  issueId           String?            @db.Uuid
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  // Relations
+  author            User               @relation("AuthorArticles", fields: [authorId], references: [id])
+  issue             Issue?             @relation(fields: [issueId], references: [id])
+  reviewAssignments ReviewAssignment[]
+}
+
+model ReviewAssignment {
+  id                String               @id @default(uuid()) @db.Uuid
+  articleId         String               @db.Uuid
+  reviewerId        String               @db.Uuid
+  status            ReviewStatus         @default(PENDING)
+  editorFeedback    String?              @db.Text
+  authorFeedback    String?              @db.Text
+  recommendation    RecommendationScore?
+
+  // Relations
+  article           Article              @relation(fields: [articleId], references: [id])
+  reviewer          User                 @relation("ReviewerAssignments", fields: [reviewerId], references: [id])
+}
+
+model Issue {
+  id                String             @id @default(uuid()) @db.Uuid
+  volume            Int
+  issueNumber       Int
+  status            IssueStatus        @default(DRAFT)
+  publishedAt       DateTime?
+
+  // Relations
+  articles          Article[]
+}
+
+model ApcToken {
+  id                String             @id @default(uuid()) @db.Uuid
+  tokenCode         String             @unique
+  isRedeemed        Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+}
