@@ -54,15 +54,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!authorId || typeof authorId !== 'string' || authorId.trim().length === 0) {
-      return NextResponse.json(
-        { error: 'authorId is required and must be a non-empty string (UUID).' },
-        { status: 400 },
-      );
+    // 2b. Resolve the author. The submission form no longer collects an
+    // authorId, so for local testing we fall back to the seeded test
+    // author. When auth is enabled, this should be derived from the
+    // session instead.
+    let resolvedAuthorId = authorId;
+    if (!resolvedAuthorId || typeof resolvedAuthorId !== 'string' || resolvedAuthorId.trim().length === 0) {
+      const testAuthor = await prisma.user.findFirst({
+        where: { email: 'author.test@university.edu' },
+      });
+
+      if (!testAuthor) {
+        return NextResponse.json(
+          { error: 'No author available. Seed the database or provide an authorId.' },
+          { status: 400 },
+        );
+      }
+
+      resolvedAuthorId = testAuthor.id;
     }
 
-    // 2b. Validate UUID format before hitting the database
-    if (!isValidUuid(authorId)) {
+    // 2c. Validate UUID format before hitting the database
+    if (!isValidUuid(resolvedAuthorId)) {
       return NextResponse.json(
         { error: 'authorId must be a valid UUID (e.g. 550e8400-e29b-41d4-a716-446655440000).' },
         { status: 400 },
@@ -71,12 +84,12 @@ export async function POST(request: NextRequest) {
 
     // 3. Verify the referenced author exists in the database
     const author = await prisma.user.findUnique({
-      where: { id: authorId },
+      where: { id: resolvedAuthorId },
     });
 
     if (!author) {
       return NextResponse.json(
-        { error: `No user found with authorId "${authorId}".` },
+        { error: `No user found with authorId "${resolvedAuthorId}".` },
         { status: 400 },
       );
     }
@@ -115,7 +128,7 @@ export async function POST(request: NextRequest) {
           keywords,
           pdfUrl: pdfUrl.trim(),
           status: ArticleStatus.UNDER_REVIEW,
-          authorId,
+          authorId: resolvedAuthorId,
         },
       });
 

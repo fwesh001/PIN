@@ -2,6 +2,7 @@ import "dotenv/config";
 import { PrismaClient, Role, ArticleStatus } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import pg from 'pg';
+import bcrypt from 'bcryptjs';
 
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -22,12 +23,15 @@ async function main() {
   console.log('🧹 Cleaned existing database rows.');
 
   // 2. Create Initial Core Users
+  const defaultPasswordHash = await bcrypt.hash('test-password-123', 10);
+
   const editor = await prisma.user.create({
     data: {
       email: 'editor@njpst.org',
       name: 'Prof. S. M. Gumel',
       role: Role.EDITOR,
       affiliation: 'Bayero University Kano',
+      passwordHash: defaultPasswordHash,
     },
   });
 
@@ -37,6 +41,7 @@ async function main() {
       name: 'Dr. Fatima Umar',
       role: Role.AUTHOR,
       affiliation: 'Ahmadu Bello University',
+      passwordHash: defaultPasswordHash,
     },
   });
 
@@ -46,6 +51,7 @@ async function main() {
       name: 'Prof. John Doe',
       role: Role.REVIEWER,
       affiliation: 'University of Ibadan',
+      passwordHash: defaultPasswordHash,
     },
   });
 
