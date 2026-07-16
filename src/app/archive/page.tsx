@@ -1,7 +1,11 @@
+import Link from 'next/link';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { ArticleStatus, IssueStatus } from '@prisma/client';
 import { BookIcon, FileIcon, InboxIcon, UserIcon } from '@/components/Icons';
 import ArchiveFilters from '@/components/ArchiveFilters';
+import Logo from '@/components/Logo';
 
 /**
  * Archive & Faceted Search Page — Server Component
@@ -89,6 +93,22 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
     .slice(0, 20)
     .map(([kw]) => kw);
 
+  const session = await getServerSession(authOptions);
+  const userId = (session?.user as { id?: string })?.id;
+  const currentUser = userId
+    ? await prisma.user.findUnique({
+        where: { id: userId },
+        select: { name: true, profilePicture: true, role: true },
+      })
+    : null;
+
+  const ROLE_HOME: Record<string, string> = {
+    EDITOR: '/editor',
+    REVIEWER: '/reviewer',
+    AUTHOR: '/dashboard/author',
+    READER: '/dashboard/author',
+  };
+
   // Unique volume numbers for the sidebar
   const volumes = publishedVolumes.map((v) => v.volume);
 
@@ -97,7 +117,7 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
       <header className="w-full bg-white dark:bg-blue-950 border-b border-blue-100 dark:border-blue-900 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
-            <BookIcon className="h-8 w-8 text-blue-900 dark:text-blue-100" />
+            <Logo className="h-10 w-auto" />
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 dark:text-blue-400">
                 Polymer Institute of Nigeria
@@ -122,17 +142,39 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
               Archive
             </a>
             <a
-              href="/submit"
+              href="/dashboard/author/submit"
               className="transition hover:text-blue-600 dark:hover:text-blue-400"
             >
               Submit Manuscript
             </a>
-            <a
-              href="/login"
-              className="rounded-full border border-blue-600 bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700 dark:border-blue-400 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
-            >
-              Login
-            </a>
+            {currentUser ? (
+              <Link
+                href={ROLE_HOME[currentUser.role] ?? '/dashboard/author'}
+                className="inline-flex items-center gap-2 rounded-full border border-blue-600 bg-white px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-50 dark:border-blue-400 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
+              >
+                {currentUser.profilePicture ? (
+                  <img
+                    src={currentUser.profilePicture}
+                    alt={currentUser.name}
+                    className="h-7 w-7 rounded-full object-cover"
+                  />
+                ) : (
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
+                    {currentUser.name?.charAt(0).toUpperCase() ?? 'U'}
+                  </span>
+                )}
+                <span className="hidden sm:inline">
+                  {currentUser.name.split(' ')[0]}
+                </span>
+              </Link>
+            ) : (
+              <a
+                href="/login"
+                className="rounded-full border border-blue-600 bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700 dark:border-blue-400 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
+              >
+                Login
+              </a>
+            )}
           </nav>
         </div>
       </header>

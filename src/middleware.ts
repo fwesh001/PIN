@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
 /**
  * Edge Route Protection Middleware (RBAC)
  *
  * Runs on the Next.js Edge Runtime — no database calls, no Prisma.
- * Inspects the `user-role` cookie to enforce role-based access control
- * on the Editor and Reviewer dashboard routes.
+ * Decodes the NextAuth JWT session token to read the authenticated
+ * user's role and enforces role-based access control on the Editor
+ * and Reviewer dashboard routes.
  */
 
 // ── Protected path patterns ────────────────────────────────────────
@@ -19,27 +21,36 @@ const ROLE_REVIEWER = 'REVIEWER';
 
 /**
  * Middleware handler — intercepts requests to protected routes and
- * verifies the user's role from their cookie before allowing access.
+ * verifies the user's role from the NextAuth session token before
+ * allowing access.
  */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Read the user's role from the cookie
-  const userRole = request.cookies.get('user-role')?.value;
+  // Decode the NextAuth JWT (the `next-auth.session-token` cookie).
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
+  const userRole = (token?.role as string | undefined) ?? null;
 
   // ── Editor route protection ─────────────────────────────────────
   if (pathname.startsWith('/editor')) {
     if (userRole !== ROLE_EDITOR) {
-      // Unauthorized — redirect to the public homepage
-      return NextResponse.redirect(new URL('/', request.url));
+      // Unauthorized — redirect to the login page (or homepage)
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(loginUrl);
     }
   }
 
   // ── Reviewer route protection ────────────────────────────────────
   if (pathname.startsWith('/reviewer')) {
     if (userRole !== ROLE_REVIEWER) {
-      // Unauthorized — redirect to the public homepage
-      return NextResponse.redirect(new URL('/', request.url));
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(loginUrl);
     }
   }
 

@@ -3,6 +3,7 @@
 import { useState, FormEvent } from 'react';
 import { signIn } from 'next-auth/react';
 import { BookIcon, GoogleIcon, GlobeIcon, ScalesIcon, ShieldIcon } from '@/components/Icons';
+import Logo from '@/components/Logo';
 
 /**
  * Unified Authentication Portal — Client Component
@@ -57,7 +58,10 @@ export default function LoginPage() {
         if (signInResult?.error) {
           setError('Account created but sign-in failed. Please try logging in.');
         } else {
-          window.location.href = '/submit';
+          // Role-based landing: ask the server which dashboard to use.
+          const res = await fetch('/api/auth/redirect');
+          const { url } = await res.json();
+          window.location.href = url;
         }
       } else {
         // ── Sign-in flow ───────────────────────────────────────
@@ -70,7 +74,9 @@ export default function LoginPage() {
         if (signInResult?.error) {
           setError('Invalid email or password.');
         } else {
-          window.location.href = '/submit';
+          const res = await fetch('/api/auth/redirect');
+          const { url } = await res.json();
+          window.location.href = url;
         }
       }
     } catch (err) {
@@ -82,7 +88,7 @@ export default function LoginPage() {
   }
 
   function handleGoogleAuth() {
-    signIn('google', { callbackUrl: '/submit' });
+    signIn('google', { callbackUrl: '/auth/redirect' });
   }
 
   return (
@@ -93,9 +99,9 @@ export default function LoginPage() {
       <aside className="hidden lg:flex lg:w-1/2 flex-col justify-between bg-gradient-to-br from-blue-950 via-blue-900 to-blue-800 px-12 xl:px-20 py-12 text-blue-100">
         {/* Brand lockup */}
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-800/60 ring-1 ring-blue-400/30">
-            <BookIcon className="h-7 w-7 text-blue-200" />
-          </div>
+          <Logo
+            className="h-12 w-auto rounded-xl bg-blue-800/60 p-1 ring-1 ring-blue-400/30"
+          />
           <div>
             <p className="text-lg font-bold tracking-wide text-white">NJPST</p>
             <p className="text-xs text-blue-300">
@@ -174,8 +180,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           {/* Compact brand header — mobile / tablet only */}
           <div className="mb-6 flex items-center justify-center gap-2 lg:hidden">
-            <BookIcon className="h-8 w-8 text-blue-300" />
-            <span className="text-lg font-bold text-white">NJPST</span>
+            <Logo className="h-8 w-auto" alt="NJPST" />
           </div>
 
           <div className="bg-white dark:bg-blue-900/40 rounded-2xl shadow-xl overflow-hidden">

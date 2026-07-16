@@ -27,10 +27,10 @@ async function main() {
 
   const editor = await prisma.user.create({
     data: {
-      email: 'editor@njpst.org',
-      name: 'Prof. S. M. Gumel',
+      email: 'zabdielfwesh001@gmail.com',
+      name: 'Dev. ANYAOGU .C. ZABDEIL',
       role: Role.EDITOR,
-      affiliation: 'Bayero University Kano',
+      affiliation: 'National open universtiy of nigeria',
       passwordHash: defaultPasswordHash,
     },
   });
@@ -41,6 +41,7 @@ async function main() {
       name: 'Dr. Fatima Umar',
       role: Role.AUTHOR,
       affiliation: 'Ahmadu Bello University',
+      country: 'Nigeria',
       passwordHash: defaultPasswordHash,
     },
   });
@@ -51,6 +52,7 @@ async function main() {
       name: 'Prof. John Doe',
       role: Role.REVIEWER,
       affiliation: 'University of Ibadan',
+      country: 'Nigeria',
       passwordHash: defaultPasswordHash,
     },
   });

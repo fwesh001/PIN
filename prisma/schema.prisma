@@ -48,11 +48,15 @@ model User {
   name              String
   role              Role               @default(READER)
   affiliation       String?
+  country           String?
+  phone             String?
+  profilePicture    String?
   passwordHash      String?
   createdAt         DateTime           @default(now())
 
   // Relations
   articles          Article[]          @relation("AuthorArticles")
+  manuscriptAuthors ManuscriptAuthor[] @relation("ManuscriptAuthorUser")
   reviewAssignments ReviewAssignment[] @relation("ReviewerAssignments")
 }
 
@@ -62,8 +66,12 @@ model Article {
   abstract          String             @db.Text
   keywords          String[]
   pdfUrl            String
+  coverLetterUrl    String?
+  supplementaryUrls String[]
+  editorComment     String?            @db.Text
   status            ArticleStatus      @default(SUBMITTED)
   doi               String?            @unique
+  views             Int                @default(0)
   authorId          String             @db.Uuid
   issueId           String?            @db.Uuid
   createdAt         DateTime           @default(now())
@@ -73,10 +81,27 @@ model Article {
   author            User               @relation("AuthorArticles", fields: [authorId], references: [id])
   issue             Issue?             @relation(fields: [issueId], references: [id])
   reviewAssignments ReviewAssignment[]
+  manuscriptAuthors ManuscriptAuthor[] @relation("ManuscriptAuthorArticle")
 
   // Performance indexes
   @@index([status])
   @@index([authorId])
+}
+
+model ManuscriptAuthor {
+  id         String   @id @default(uuid()) @db.Uuid
+  articleId  String   @db.Uuid
+  userId     String?  @db.Uuid
+  name       String
+  email      String
+  affiliation String?
+  country    String?
+  order      Int      @default(0)
+
+  article    Article  @relation("ManuscriptAuthorArticle", fields: [articleId], references: [id], onDelete: Cascade)
+  user       User?    @relation("ManuscriptAuthorUser", fields: [userId], references: [id])
+
+  @@index([articleId])
 }
 
 model ReviewAssignment {

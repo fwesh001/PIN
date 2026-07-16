@@ -1,6 +1,12 @@
+import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { ArticleStatus } from '@prisma/client';
-import { GlobeIcon, ScalesIcon, IdBadgeIcon, BookIcon, FileIcon } from '@/components/Icons';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { GlobeIcon, ScalesIcon, IdBadgeIcon, BookIcon, FileIcon, EyeIcon, DownloadIcon } from '@/components/Icons';
+import ThemeToggle from '@/components/ThemeToggle';
+import Logo from '@/components/Logo';
+import MobileNav from '@/components/MobileNav';
 
 /**
  * Public Homepage — Async Server Component
@@ -17,35 +23,73 @@ import { GlobeIcon, ScalesIcon, IdBadgeIcon, BookIcon, FileIcon } from '@/compon
  *   6. Footer
  */
 export default async function HomePage() {
-  // ── Server-side data fetch ──────────────────────────────────────
-  const publishedArticles = await prisma.article.findMany({
-    where: { status: ArticleStatus.PUBLISHED },
-    include: {
-      author: {
-        select: {
-          name: true,
-          affiliation: true,
-        },
-      },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
+  // ── Server-side data fetch (protected): handle DB offline gracefully
+  let publishedArticles: Array<any> = [];
+  let latestIssue: any = null;
 
-  // Derive the latest published issue for the split-card section
-  const latestIssue = await prisma.issue.findFirst({
-    where: { status: 'PUBLISHED' },
-    orderBy: { publishedAt: 'desc' },
-    include: {
-      articles: {
-        where: { status: ArticleStatus.PUBLISHED },
-        orderBy: { createdAt: 'desc' },
-        take: 3,
-        include: {
-          author: { select: { name: true } },
+  try {
+    publishedArticles = await prisma.article.findMany({
+      where: { status: ArticleStatus.PUBLISHED },
+      include: {
+        author: {
+          select: {
+            name: true,
+            affiliation: true,
+          },
         },
       },
-    },
-  });
+      orderBy: { createdAt: 'desc' },
+    });
+    // `views` and `coverLetterUrl` are selected by default on the model.
+
+    // Derive the latest published issue for the split-card section
+    latestIssue = await prisma.issue.findFirst({
+      where: { status: 'PUBLISHED' },
+      orderBy: { publishedAt: 'desc' },
+      include: {
+        articles: {
+          where: { status: ArticleStatus.PUBLISHED },
+          orderBy: { createdAt: 'desc' },
+          take: 3,
+          include: {
+            author: { select: { name: true } },
+          },
+        },
+      },
+    });
+  } catch (err) {
+    // Common in dev when DATABASE_URL is not set or Postgres isn't running.
+    // Prevent a 500 by rendering an empty feed and logging the error.
+    // The real fix is to ensure a running Postgres and correct DATABASE_URL.
+    // eslint-disable-next-line no-console
+    console.error('Prisma DB error (homepage):', err);
+    publishedArticles = [];
+    latestIssue = null;
+  }
+
+  const session = await getServerSession(authOptions);
+  const userId = (session?.user as { id?: string })?.id;
+  let currentUser: any = null;
+  try {
+    if (userId) {
+      currentUser = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { name: true, profilePicture: true, role: true },
+      });
+    }
+  } catch (err) {
+    // If the DB is down, avoid throwing during prerender — continue without a user.
+    // eslint-disable-next-line no-console
+    console.error('Prisma DB error (homepage user lookup):', err);
+    currentUser = null;
+  }
+
+  const ROLE_HOME: Record<string, string> = {
+    EDITOR: '/editor',
+    REVIEWER: '/reviewer',
+    AUTHOR: '/dashboard/author',
+    READER: '/dashboard/author',
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-blue-50 dark:bg-blue-950 transition-colors">
@@ -55,14 +99,9 @@ export default async function HomePage() {
       <header className="w-full bg-white dark:bg-blue-950 border-b border-blue-100 dark:border-blue-900 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 sm:h-20">
           {/* Left — Brand block */}
-          <div className="flex flex-col leading-tight">
-            <span className="text-[0.65rem] sm:text-xs font-semibold tracking-widest uppercase text-blue-600 dark:text-blue-400">
-              Polymer Institute of Nigeria (PIN)
-            </span>
-            <span className="text-xl sm:text-2xl font-extrabold text-blue-950 dark:text-blue-50 tracking-tight">
-              NJPST
-            </span>
-          </div>
+          <Link href="/" className="flex items-center gap-3">
+            <Logo className="h-10 w-auto sm:h-12" />
+          </Link>
 
           {/* Right — Nav links */}
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-blue-900 dark:text-blue-200">
@@ -84,21 +123,50 @@ export default async function HomePage() {
             >
               Submit Manuscript
             </a>
-            <a
-              href="/login"
-              className="px-4 py-2 rounded-md border border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
-            >
-              Login
-            </a>
+            {currentUser ? (
+              <Link
+                href={ROLE_HOME[currentUser.role] ?? '/dashboard/author'}
+                className="inline-flex items-center gap-2 rounded-full border border-blue-600 bg-white px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-50 dark:border-blue-400 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
+              >
+                {currentUser.profilePicture ? (
+                  <img
+                    src={currentUser.profilePicture}
+                    alt={currentUser.name}
+                    className="h-7 w-7 rounded-full object-cover"
+                  />
+                ) : (
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
+                    {currentUser.name?.charAt(0).toUpperCase() ?? 'U'}
+                  </span>
+                )}
+                <span className="hidden sm:inline">
+                  {currentUser.name.split(' ')[0]}
+                </span>
+              </Link>
+            ) : (
+              <a
+                href="/login"
+                className="px-4 py-2 rounded-md border border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
+              >
+                Login
+              </a>
+            )}
+            <ThemeToggle />
           </nav>
 
-          {/* Mobile menu button placeholder */}
-          <button
-            className="md:hidden text-blue-900 dark:text-blue-200 text-2xl"
-            aria-label="Open menu"
-          >
-            ☰
-          </button>
+          {/* Mobile menu — functional hamburger (client component) */}
+          <MobileNav
+            user={
+              currentUser
+                ? {
+                    name: currentUser.name,
+                    profilePicture: currentUser.profilePicture,
+                    role: currentUser.role,
+                    roleHome: ROLE_HOME[currentUser.role] ?? '/dashboard/author',
+                  }
+                : null
+            }
+          />
         </div>
       </header>
 
@@ -210,7 +278,7 @@ export default async function HomePage() {
 
                 {latestIssue && latestIssue.articles.length > 0 ? (
                   <ul className="space-y-5">
-                    {latestIssue.articles.map((article, idx) => (
+                    {latestIssue.articles.map((article: any, idx: number) => (
                       <li
                         key={article.id}
                         className="flex gap-4 items-start group"
@@ -254,10 +322,10 @@ export default async function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          5. PUBLISHED ARTICLES FEED
+          5. PUBLISHED ARTICLES FEED — GRID
           ══════════════════════════════════════════════════════════════ */}
       <section className="w-full bg-white dark:bg-blue-950 py-12 sm:py-16 px-4 sm:px-6 lg:px-8 flex-1">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold text-blue-950 dark:text-blue-100 mb-2">
             Published Articles
           </h2>
@@ -278,85 +346,128 @@ export default async function HomePage() {
             </div>
           )}
 
-          {/* Article Cards */}
+          {/* Article Card Grid */}
           {publishedArticles.length > 0 && (
-            <div className="space-y-8">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {publishedArticles.map((article) => (
                 <article
                   key={article.id}
-                  className="border-b border-blue-100 dark:border-blue-900 pb-8 last:border-b-0"
+                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-blue-200 dark:border-blue-800 bg-white dark:bg-blue-900/30 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1"
                 >
-                  {/* Title */}
-                  <h3 className="text-lg sm:text-xl font-bold text-blue-950 dark:text-blue-100 leading-snug mb-2">
-                    <a
-                      href={`/article/${article.id}`}
-                      className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                    >
-                      {article.title}
-                    </a>
-                  </h3>
+                  {/* Document-style header — bold centered file icon */}
+                  <div className="relative flex h-36 items-center justify-center overflow-hidden border-b border-blue-100 bg-gradient-to-b from-blue-50 to-blue-100 dark:border-blue-800 dark:from-blue-900/40 dark:to-blue-950/60">
+                    {/* Subtle corner accents */}
+                    <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-blue-200/40 dark:bg-blue-800/30" />
+                    <div className="absolute -bottom-10 -left-10 h-28 w-28 rounded-full bg-blue-200/30 dark:bg-blue-800/20" />
 
-                  {/* Author & Affiliation */}
-                  <p className="text-sm text-blue-700 dark:text-blue-300 mb-1">
-                    <span className="font-semibold">
-                      {article.author.name}
-                    </span>
-                    {article.author.affiliation && (
-                      <span className="text-blue-500 dark:text-blue-400">
-                        {' '}
-                        · {article.author.affiliation}
+                    {/* Bold document icon, centered */}
+                    <div className="relative z-10 flex h-20 w-20 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-900/20 ring-4 ring-white/70 dark:ring-blue-950/40">
+                      <FileIcon className="h-10 w-10" strokeWidth={2.5} />
+                    </div>
+
+                    {/* Cover letter badge — design placeholder; links to the
+                        uploaded file when one exists, otherwise static. */}
+                    {article.coverLetterUrl ? (
+                      <a
+                        href={article.coverLetterUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-blue-600 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm transition-colors hover:bg-blue-700"
+                      >
+                        <FileIcon className="h-3.5 w-3.5" /> Cover Letter
+                      </a>
+                    ) : (
+                      <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-blue-500 ring-1 ring-blue-200 dark:bg-blue-800/50 dark:text-blue-300 dark:ring-blue-700">
+                        <FileIcon className="h-3.5 w-3.5" /> Cover Letter
                       </span>
                     )}
-                  </p>
+                  </div>
 
-                  {/* Publication Date */}
-                  <p className="text-xs text-blue-400 dark:text-blue-500 mb-3">
-                    Published:{' '}
-                    {article.createdAt.toLocaleDateString('en-NG', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </p>
+                  {/* Card body */}
+                  <div className="flex flex-1 flex-col p-5">
+                    {/* Title */}
+                    <h3 className="text-base font-bold leading-snug text-blue-950 dark:text-blue-100">
+                      <a
+                        href={`/article/${article.id}`}
+                        className="transition-colors hover:text-blue-600 dark:hover:text-blue-400"
+                      >
+                        {article.title}
+                      </a>
+                    </h3>
 
-                  {/* Keyword Pills */}
-                  {article.keywords.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {article.keywords.map((keyword, index) => (
-                        <span
-                          key={index}
-                          className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
-                        >
-                          {keyword}
+                    {/* Author & Affiliation */}
+                    <p className="mt-2 text-sm text-blue-700 dark:text-blue-300">
+                      <span className="font-semibold">{article.author.name}</span>
+                      {article.author.affiliation && (
+                        <span className="text-blue-500 dark:text-blue-400">
+                          {' '}
+                          · {article.author.affiliation}
                         </span>
-                      ))}
+                      )}
+                    </p>
+
+                    {/* Publication date & views */}
+                    <p className="mt-2 flex items-center gap-3 text-xs text-blue-400 dark:text-blue-500">
+                      <span>
+                        Published{' '}
+                        {article.createdAt.toLocaleDateString('en-NG', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <EyeIcon className="h-3.5 w-3.5" />
+                        {(article.views ?? 0).toLocaleString()} views
+                      </span>
+                    </p>
+
+                    {/* Keyword pills */}
+                    {article.keywords.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        {article.keywords.slice(0, 3).map((keyword: string, index: number) => (
+                          <span
+                            key={index}
+                            className="inline-block rounded-full bg-blue-100 px-2.5 py-0.5 text-[11px] font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                          >
+                            {keyword}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Action row — icons at the bottom (larger screens) */}
+                    <div className="mt-auto flex flex-wrap items-center gap-2 pt-5">
+                      <a
+                        href={`/article/${article.id}`}
+                        aria-label="Read article"
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition-all hover:bg-blue-700 active:scale-95 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
+                      >
+                        <EyeIcon className="h-4 w-4" /> Read
+                      </a>
+                      <a
+                        href={article.pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Download PDF"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 px-3 py-2 text-xs font-semibold text-blue-700 transition-all hover:bg-blue-100 active:scale-95 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900"
+                      >
+                        <DownloadIcon className="h-4 w-4" /> Download
+                      </a>
                     </div>
-                  )}
-
-                  {/* Abstract */}
-                  <p className="text-sm text-blue-800/80 dark:text-blue-300/80 leading-relaxed mb-4">
-                    {article.abstract}
-                  </p>
-
-                  {/* PDF Download — monochromatic blue */}
-                  <a
-                    href={article.pdfUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 dark:bg-blue-400 dark:hover:bg-blue-300 text-white dark:text-blue-950 text-sm font-semibold transition-all hover:shadow-lg active:scale-[0.98]"
-                  >
-                    <FileIcon className="w-4 h-4" /> Download Full Text (PDF)
-                  </a>
+                  </div>
                 </article>
               ))}
-
-              {/* Feed footer */}
-              <p className="text-xs text-blue-400 dark:text-blue-500 text-center pt-4 pb-2">
-                {publishedArticles.length} published article
-                {publishedArticles.length !== 1 ? 's' : ''} · ISSN pending ·
-                Hosted at journal.polymerinstitute.org.ng
-              </p>
             </div>
+          )}
+
+          {/* Feed footer */}
+          {publishedArticles.length > 0 && (
+            <p className="text-xs text-blue-400 dark:text-blue-500 text-center pt-8">
+              {publishedArticles.length} published article
+              {publishedArticles.length !== 1 ? 's' : ''} · ISSN pending ·
+              Hosted at journal.polymerinstitute.org.ng
+            </p>
           )}
         </div>
       </section>

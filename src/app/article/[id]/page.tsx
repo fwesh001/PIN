@@ -85,6 +85,16 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound();
   }
 
+  // Increment the view counter (best-effort — never block the page render).
+  try {
+    await prisma.article.update({
+      where: { id },
+      data: { views: { increment: 1 } },
+    });
+  } catch {
+    // Ignore view-count failures (e.g. DB offline) — non-critical.
+  }
+
   const year =
     article.issue?.publishedAt?.getFullYear() ??
     article.createdAt.getFullYear();
