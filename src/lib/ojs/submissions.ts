@@ -180,7 +180,8 @@ export async function getPublishedSubmissionsByIssue(
     .filter(
       (s) =>
         (issue.volume != null && String(s.volume) === String(issue.volume)) ||
-        (issue.number != null && String(s.issueNumber) === String(issue.number)),
+        (issue.issueNumber != null &&
+          String(s.issueNumber) === String(issue.issueNumber)),
     )
     .slice(0, count);
 }

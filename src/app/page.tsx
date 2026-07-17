@@ -1,12 +1,13 @@
 import Link from 'next/link';
-import { prisma } from '@/lib/prisma';
-import { ArticleStatus } from '@prisma/client';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import { GlobeIcon, ScalesIcon, IdBadgeIcon, BookIcon, FileIcon, EyeIcon, DownloadIcon } from '@/components/Icons';
 import ThemeToggle from '@/components/ThemeToggle';
 import Logo from '@/components/Logo';
 import MobileNav from '@/components/MobileNav';
+import { getPublishedSubmissions, getPublishedSubmissionsByIssue } from '@/lib/ojs/submissions';
+import { getCurrentIssue } from '@/lib/ojs/issues';
+
+/** OJS portal base URL for authenticated workflows (submit, login). */
+const OJS_URL = process.env.NEXT_PUBLIC_OJS_URL ?? 'https://pinjournal.org';
 
 /**
  * Public Homepage — Async Server Component
@@ -23,73 +24,31 @@ import MobileNav from '@/components/MobileNav';
  *   6. Footer
  */
 export default async function HomePage() {
-  // ── Server-side data fetch (protected): handle DB offline gracefully
-  let publishedArticles: Array<any> = [];
-  let latestIssue: any = null;
+  // ── Server-side data fetch from OJS (graceful empty states if OJS is offline)
+  let publishedArticles: Array<import('@/lib/ojs/types').NormalizedArticle> = [];
+  let latestIssue: import('@/lib/ojs/types').NormalizedIssue | null = null;
+  let featuredArticles: Array<import('@/lib/ojs/types').NormalizedArticle> = [];
 
   try {
-    publishedArticles = await prisma.article.findMany({
-      where: { status: ArticleStatus.PUBLISHED },
-      include: {
-        author: {
-          select: {
-            name: true,
-            affiliation: true,
-          },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
-    // `views` and `coverLetterUrl` are selected by default on the model.
+    const [subs, issue] = await Promise.all([
+      getPublishedSubmissions({ count: 50 }),
+      getCurrentIssue(),
+    ]);
+    publishedArticles = subs;
+    latestIssue = issue;
 
-    // Derive the latest published issue for the split-card section
-    latestIssue = await prisma.issue.findFirst({
-      where: { status: 'PUBLISHED' },
-      orderBy: { publishedAt: 'desc' },
-      include: {
-        articles: {
-          where: { status: ArticleStatus.PUBLISHED },
-          orderBy: { createdAt: 'desc' },
-          take: 3,
-          include: {
-            author: { select: { name: true } },
-          },
-        },
-      },
-    });
-  } catch (err) {
-    // Common in dev when DATABASE_URL is not set or Postgres isn't running.
-    // Prevent a 500 by rendering an empty feed and logging the error.
-    // The real fix is to ensure a running Postgres and correct DATABASE_URL.
-    // eslint-disable-next-line no-console
-    console.error('Prisma DB error (homepage):', err);
-    publishedArticles = [];
-    latestIssue = null;
-  }
-
-  const session = await getServerSession(authOptions);
-  const userId = (session?.user as { id?: string })?.id;
-  let currentUser: any = null;
-  try {
-    if (userId) {
-      currentUser = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { name: true, profilePicture: true, role: true },
-      });
+    // Derive the featured volume article list for the split-card section.
+    if (issue) {
+      featuredArticles = await getPublishedSubmissionsByIssue(issue, 3);
     }
   } catch (err) {
-    // If the DB is down, avoid throwing during prerender — continue without a user.
+    // If OJS is unreachable, avoid a 500 — render empty states and log.
     // eslint-disable-next-line no-console
-    console.error('Prisma DB error (homepage user lookup):', err);
-    currentUser = null;
+    console.error('OJS API error (homepage):', err);
+    publishedArticles = [];
+    latestIssue = null;
+    featuredArticles = [];
   }
-
-  const ROLE_HOME: Record<string, string> = {
-    EDITOR: '/editor',
-    REVIEWER: '/reviewer',
-    AUTHOR: '/dashboard/author',
-    READER: '/dashboard/author',
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-blue-50 dark:bg-blue-950 transition-colors">
@@ -118,55 +77,22 @@ export default async function HomePage() {
               Archive
             </a>
             <a
-              href="/dashboard/author/submit"
+              href={`${OJS_URL}/submission/wizard`}
               className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors underline-offset-4 hover:underline"
             >
               Submit Manuscript
             </a>
-            {currentUser ? (
-              <Link
-                href={ROLE_HOME[currentUser.role] ?? '/dashboard/author'}
-                className="inline-flex items-center gap-2 rounded-full border border-blue-600 bg-white px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-50 dark:border-blue-400 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
-              >
-                {currentUser.profilePicture ? (
-                  <img
-                    src={currentUser.profilePicture}
-                    alt={currentUser.name}
-                    className="h-7 w-7 rounded-full object-cover"
-                  />
-                ) : (
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
-                    {currentUser.name?.charAt(0).toUpperCase() ?? 'U'}
-                  </span>
-                )}
-                <span className="hidden sm:inline">
-                  {currentUser.name.split(' ')[0]}
-                </span>
-              </Link>
-            ) : (
-              <a
-                href="/login"
-                className="px-4 py-2 rounded-md border border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
-              >
-                Login
-              </a>
-            )}
+            <a
+              href={`${OJS_URL}/login`}
+              className="px-4 py-2 rounded-md border border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
+            >
+              Login
+            </a>
             <ThemeToggle />
           </nav>
 
           {/* Mobile menu — functional hamburger (client component) */}
-          <MobileNav
-            user={
-              currentUser
-                ? {
-                    name: currentUser.name,
-                    profilePicture: currentUser.profilePicture,
-                    role: currentUser.role,
-                    roleHome: ROLE_HOME[currentUser.role] ?? '/dashboard/author',
-                  }
-                : null
-            }
-          />
+          <MobileNav />
         </div>
       </header>
 
@@ -253,8 +179,8 @@ export default async function HomePage() {
                 </p>
                 <p className="text-blue-200 text-lg font-medium">
                   Issue {latestIssue?.issueNumber ?? '2'}&ensp;·&ensp;
-                  {latestIssue?.publishedAt
-                    ? new Date(latestIssue.publishedAt).getFullYear()
+                  {latestIssue?.datePublished
+                    ? new Date(latestIssue.datePublished).getFullYear()
                     : new Date().getFullYear()}
                 </p>
                 <div className="pt-4">
@@ -276,9 +202,9 @@ export default async function HomePage() {
                   {latestIssue?.issueNumber ?? '2'}
                 </h3>
 
-                {latestIssue && latestIssue.articles.length > 0 ? (
+                {featuredArticles.length > 0 ? (
                   <ul className="space-y-5">
-                    {latestIssue.articles.map((article: any, idx: number) => (
+                    {featuredArticles.map((article, idx: number) => (
                       <li
                         key={article.id}
                         className="flex gap-4 items-start group"
@@ -294,7 +220,7 @@ export default async function HomePage() {
                             {article.title}
                           </a>
                           <p className="text-xs text-blue-500 dark:text-blue-400 mt-0.5">
-                            {article.author.name}
+                            {article.authors[0]?.name}
                           </p>
                         </div>
                       </li>
@@ -365,22 +291,10 @@ export default async function HomePage() {
                       <FileIcon className="h-10 w-10" strokeWidth={2.5} />
                     </div>
 
-                    {/* Cover letter badge — design placeholder; links to the
-                        uploaded file when one exists, otherwise static. */}
-                    {article.coverLetterUrl ? (
-                      <a
-                        href={article.coverLetterUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-blue-600 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm transition-colors hover:bg-blue-700"
-                      >
-                        <FileIcon className="h-3.5 w-3.5" /> Cover Letter
-                      </a>
-                    ) : (
-                      <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-blue-500 ring-1 ring-blue-200 dark:bg-blue-800/50 dark:text-blue-300 dark:ring-blue-700">
-                        <FileIcon className="h-3.5 w-3.5" /> Cover Letter
-                      </span>
-                    )}
+                    {/* Cover letter badge — design placeholder (static). */}
+                    <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-blue-500 ring-1 ring-blue-200 dark:bg-blue-800/50 dark:text-blue-300 dark:ring-blue-700">
+                      <FileIcon className="h-3.5 w-3.5" /> Cover Letter
+                    </span>
                   </div>
 
                   {/* Card body */}
@@ -397,11 +311,11 @@ export default async function HomePage() {
 
                     {/* Author & Affiliation */}
                     <p className="mt-2 text-sm text-blue-700 dark:text-blue-300">
-                      <span className="font-semibold">{article.author.name}</span>
-                      {article.author.affiliation && (
+                      <span className="font-semibold">{article.authors[0]?.name}</span>
+                      {article.authors[0]?.affiliation && (
                         <span className="text-blue-500 dark:text-blue-400">
                           {' '}
-                          · {article.author.affiliation}
+                          · {article.authors[0].affiliation}
                         </span>
                       )}
                     </p>
@@ -410,7 +324,7 @@ export default async function HomePage() {
                     <p className="mt-2 flex items-center gap-3 text-xs text-blue-400 dark:text-blue-500">
                       <span>
                         Published{' '}
-                        {article.createdAt.toLocaleDateString('en-NG', {
+                        {new Date(article.datePublished ?? '').toLocaleDateString('en-NG', {
                           year: 'numeric',
                           month: 'short',
                           day: 'numeric',

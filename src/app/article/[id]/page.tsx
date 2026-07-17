@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { prisma } from '@/lib/prisma';
 import { FileIcon, ChevronLeftIcon } from '@/components/Icons';
+import { getSubmissionById } from '@/lib/ojs/submissions';
 
 /* ==================================================================
    1. Dynamic Metadata — Google Scholar / Dublin Core / HighWire Press
@@ -16,24 +16,20 @@ export async function generateMetadata({
 }: GenerateMetadataParams): Promise<Metadata> {
   const { id } = await params;
 
-  const article = await prisma.article.findUnique({
-    where: { id },
-    include: {
-      author: { select: { name: true } },
-      issue: { select: { volume: true, publishedAt: true } },
-    },
-  });
+  const article = await getSubmissionById(id);
 
   if (!article) {
     return { title: 'Article Not Found — NJPST' };
   }
 
-  const year =
-    article.issue?.publishedAt?.getFullYear() ??
-    article.createdAt.getFullYear();
+  const year = article.year
+    ? Number(article.year)
+    : article.datePublished
+      ? new Date(article.datePublished).getFullYear()
+      : new Date().getFullYear();
 
   const pdfUrl = article.pdfUrl;
-  const authorName = article.author.name?.trim() ?? '';
+  const authorName = article.authors[0]?.name?.trim() ?? '';
   const articleTitle = article.title.trim();
 
   return {
@@ -43,7 +39,7 @@ export async function generateMetadata({
       title: articleTitle,
       type: 'article',
       authors: authorName ? [authorName] : undefined,
-      publishedTime: article.createdAt.toISOString(),
+      publishedTime: article.datePublished ?? new Date().toISOString(),
     },
     // HighWire Press + Dublin Core tags for crawler ingestion
     other: {
@@ -56,6 +52,7 @@ export async function generateMetadata({
       'DC.Title': articleTitle,
       'DC.Creator': authorName,
       'DC.Date': String(year),
+      'DC.Identifier': article.doi ?? pdfUrl,
       'DC.Publisher': 'Polymer Institute of Nigeria (PIN)',
     },
   };
@@ -72,32 +69,18 @@ interface ArticlePageProps {
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { id } = await params;
 
-  const article = await prisma.article.findUnique({
-    where: { id },
-    include: {
-      author: { select: { name: true, affiliation: true } },
-      issue: { select: { volume: true, issueNumber: true, publishedAt: true } },
-    },
-  });
+  const article = await getSubmissionById(id);
 
   // Guard: article does not exist
   if (!article) {
     notFound();
   }
 
-  // Increment the view counter (best-effort — never block the page render).
-  try {
-    await prisma.article.update({
-      where: { id },
-      data: { views: { increment: 1 } },
-    });
-  } catch {
-    // Ignore view-count failures (e.g. DB offline) — non-critical.
-  }
-
-  const year =
-    article.issue?.publishedAt?.getFullYear() ??
-    article.createdAt.getFullYear();
+  const year = article.year
+    ? Number(article.year)
+    : article.datePublished
+      ? new Date(article.datePublished).getFullYear()
+      : new Date().getFullYear();
 
   return (
     <div className="min-h-screen bg-blue-50 dark:bg-blue-950">
@@ -126,20 +109,19 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         {/* ── Contributor Card ─────────────────────────────────────── */}
         <div className="mt-6">
           <p className="text-base font-semibold text-blue-950 dark:text-blue-100">
-            {article.author.name}
+            {article.authors[0]?.name}
           </p>
-          {article.author.affiliation && (
+          {article.authors[0]?.affiliation && (
             <p className="mt-0.5 text-sm text-blue-900/80 dark:text-blue-300/80">
-              {article.author.affiliation}
+              {article.authors[0].affiliation}
             </p>
           )}
           <p className="mt-1 text-sm text-blue-600 dark:text-blue-400">
             Published {year}
-            {article.issue && (
+            {article.volume != null && (
               <span>
                 {' '}
-                &middot; Vol. {article.issue.volume}, No.{' '}
-                {article.issue.issueNumber}
+                &middot; Vol. {article.volume}, No. {article.issueNumber}
               </span>
             )}
           </p>

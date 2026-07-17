@@ -172,7 +172,7 @@ export interface NormalizedArticle {
 export interface NormalizedIssue {
   id: string;
   volume?: number | string;
-  number?: number | string;
+  issueNumber?: number | string;
   year?: number | string;
   title?: string;
   datePublished?: string;

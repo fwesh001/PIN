@@ -4,24 +4,16 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ThemeToggle from '@/components/ThemeToggle';
 
-type MobileNavUser = {
-  name: string;
-  profilePicture?: string | null;
-  role: string;
-  roleHome: string;
-} | null;
-
-type MobileNavProps = {
-  user: MobileNavUser;
-};
+/** OJS portal base URL for authenticated workflows (submit, login). */
+const OJS_URL = process.env.NEXT_PUBLIC_OJS_URL ?? 'https://pinjournal.org';
 
 const NAV_LINKS = [
   { href: '/archive', label: 'Current Issue' },
   { href: '/archive', label: 'Archive' },
-  { href: '/dashboard/author/submit', label: 'Submit Manuscript' },
+  { href: `${OJS_URL}/submission/wizard`, label: 'Submit Manuscript' },
 ];
 
-export default function MobileNav({ user }: MobileNavProps) {
+export default function MobileNav() {
   const [open, setOpen] = useState(false);
 
   // Close the menu when the viewport grows to the desktop breakpoint.
@@ -80,34 +72,13 @@ export default function MobileNav({ user }: MobileNavProps) {
               </Link>
             ))}
 
-            {user ? (
-              <Link
-                href={user.roleHome}
-                onClick={() => setOpen(false)}
-                className="mt-2 flex items-center gap-3 rounded-lg bg-blue-600 px-3 py-3 text-sm font-medium text-white"
-              >
-                {user.profilePicture ? (
-                  <img
-                    src={user.profilePicture}
-                    alt={user.name}
-                    className="h-7 w-7 rounded-full object-cover"
-                  />
-                ) : (
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-sm font-semibold text-blue-600">
-                    {user.name?.charAt(0).toUpperCase() ?? 'U'}
-                  </span>
-                )}
-                {user.name.split(' ')[0]}
-              </Link>
-            ) : (
-              <a
-                href="/login"
-                onClick={() => setOpen(false)}
-                className="mt-2 rounded-lg border border-blue-600 px-3 py-3 text-center text-sm font-medium text-blue-600 dark:border-blue-400 dark:text-blue-400"
-              >
-                Login
-              </a>
-            )}
+            <a
+              href={`${OJS_URL}/login`}
+              onClick={() => setOpen(false)}
+              className="mt-2 rounded-lg border border-blue-600 px-3 py-3 text-center text-sm font-medium text-blue-600 dark:border-blue-400 dark:text-blue-400"
+            >
+              Login
+            </a>
           </div>
         </>
       )}

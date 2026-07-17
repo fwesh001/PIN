@@ -21,7 +21,7 @@ export function normalizeIssue(issue: OJSIssue): NormalizedIssue {
   return {
     id: String(issue.id),
     volume: issue.volume,
-    number: issue.number,
+    issueNumber: issue.number,
     year: issue.year,
     title: localised(issue.title),
     datePublished: issue.datePublished ?? issue.published,

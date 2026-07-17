@@ -1,11 +1,13 @@
 import Link from 'next/link';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
-import { ArticleStatus, IssueStatus } from '@prisma/client';
 import { BookIcon, FileIcon, InboxIcon, UserIcon } from '@/components/Icons';
 import ArchiveFilters from '@/components/ArchiveFilters';
 import Logo from '@/components/Logo';
+import { getPublishedSubmissions, searchSubmissions } from '@/lib/ojs/submissions';
+import { getPublishedIssues, extractVolumes } from '@/lib/ojs/issues';
+import type { NormalizedArticle } from '@/lib/ojs/types';
+
+/** OJS portal base URL for authenticated workflows (submit, login). */
+const OJS_URL = process.env.NEXT_PUBLIC_OJS_URL ?? 'https://pinjournal.org';
 
 /**
  * Archive & Faceted Search Page — Server Component
@@ -30,87 +32,52 @@ interface ArchivePageProps {
 export default async function ArchivePage({ searchParams }: ArchivePageProps) {
   const { q, volume, keyword } = await searchParams;
 
-  // ── Build the dynamic Prisma where clause ─────────────────────
-  const articleWhere: Record<string, unknown> = {
-    status: ArticleStatus.PUBLISHED,
-  };
+  // ── Fetch from OJS (graceful empty states if OJS is offline) ──
+  let articles: NormalizedArticle[] = [];
+  let volumes: number[] = [];
+  let topKeywords: string[] = [];
 
-  // Full-text search across title, abstract, and keywords
-  if (q && q.trim().length > 0) {
-    articleWhere.OR = [
-      { title: { contains: q.trim(), mode: 'insensitive' } },
-      { abstract: { contains: q.trim(), mode: 'insensitive' } },
-      { keywords: { has: q.trim() } },
-    ];
-  }
+  try {
+    // 1. Fetch published submissions (optionally filtered by search phrase).
+    const fetched = q && q.trim().length > 0
+      ? await searchSubmissions(q.trim(), 100)
+      : await getPublishedSubmissions({ count: 100 });
 
-  // Filter by keyword tag
-  if (keyword && keyword.trim().length > 0) {
-    articleWhere.keywords = { has: keyword.trim() };
-  }
+    // 2. Client-side keyword tag filter (OJS search is phrase-based).
+    articles = keyword && keyword.trim().length > 0
+      ? fetched.filter((a) =>
+          a.keywords.some((k) => k.toLowerCase() === keyword.trim().toLowerCase()),
+        )
+      : fetched;
 
-  // Filter by volume — requires joining through the Issue relation
-  if (volume && /^\d+$/.test(volume.trim())) {
-    articleWhere.issue = { volume: parseInt(volume.trim(), 10) };
-  }
-
-  // ── Parallel data fetching ────────────────────────────────────
-  const [articles, publishedVolumes, allKeywords] = await Promise.all([
-    // 1. Fetch matching articles with author + issue details
-    prisma.article.findMany({
-      where: articleWhere,
-      include: {
-        author: { select: { name: true, affiliation: true } },
-        issue: { select: { volume: true, issueNumber: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-    }),
-
-    // 2. Fetch all published volumes for the sidebar filter
-    prisma.issue.findMany({
-      where: { status: IssueStatus.PUBLISHED },
-      select: { volume: true },
-      orderBy: { volume: 'asc' },
-      distinct: ['volume'],
-    }),
-
-    // 3. Fetch all keywords from published articles for the facet cloud
-    prisma.article.findMany({
-      where: { status: ArticleStatus.PUBLISHED },
-      select: { keywords: true },
-    }),
-  ]);
-
-  // Flatten and count keyword frequencies, then take the top 20
-  const keywordCounts = new Map<string, number>();
-  for (const article of allKeywords) {
-    for (const kw of article.keywords) {
-      keywordCounts.set(kw, (keywordCounts.get(kw) ?? 0) + 1);
+    // 3. Volume filter (match against the article's volume field).
+    if (volume && /^\d+$/.test(volume.trim())) {
+      const volNum = parseInt(volume.trim(), 10);
+      articles = articles.filter((a) => Number(a.volume) === volNum);
     }
+
+    // 4. Published issues → distinct volumes for the sidebar.
+    const issues = await getPublishedIssues(100);
+    volumes = extractVolumes(issues);
+
+    // 5. Keyword frequency cloud (top 20).
+    const keywordCounts = new Map<string, number>();
+    for (const article of fetched) {
+      for (const kw of article.keywords) {
+        keywordCounts.set(kw, (keywordCounts.get(kw) ?? 0) + 1);
+      }
+    }
+    topKeywords = [...keywordCounts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 20)
+      .map(([kw]) => kw);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('OJS API error (archive):', err);
+    articles = [];
+    volumes = [];
+    topKeywords = [];
   }
-  const topKeywords = [...keywordCounts.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 20)
-    .map(([kw]) => kw);
-
-  const session = await getServerSession(authOptions);
-  const userId = (session?.user as { id?: string })?.id;
-  const currentUser = userId
-    ? await prisma.user.findUnique({
-        where: { id: userId },
-        select: { name: true, profilePicture: true, role: true },
-      })
-    : null;
-
-  const ROLE_HOME: Record<string, string> = {
-    EDITOR: '/editor',
-    REVIEWER: '/reviewer',
-    AUTHOR: '/dashboard/author',
-    READER: '/dashboard/author',
-  };
-
-  // Unique volume numbers for the sidebar
-  const volumes = publishedVolumes.map((v) => v.volume);
 
   return (
     <div className="min-h-screen bg-blue-50 dark:bg-blue-950 transition-colors">
@@ -142,39 +109,17 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
               Archive
             </a>
             <a
-              href="/dashboard/author/submit"
+              href={`${OJS_URL}/submission/wizard`}
               className="transition hover:text-blue-600 dark:hover:text-blue-400"
             >
               Submit Manuscript
             </a>
-            {currentUser ? (
-              <Link
-                href={ROLE_HOME[currentUser.role] ?? '/dashboard/author'}
-                className="inline-flex items-center gap-2 rounded-full border border-blue-600 bg-white px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-50 dark:border-blue-400 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
-              >
-                {currentUser.profilePicture ? (
-                  <img
-                    src={currentUser.profilePicture}
-                    alt={currentUser.name}
-                    className="h-7 w-7 rounded-full object-cover"
-                  />
-                ) : (
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
-                    {currentUser.name?.charAt(0).toUpperCase() ?? 'U'}
-                  </span>
-                )}
-                <span className="hidden sm:inline">
-                  {currentUser.name.split(' ')[0]}
-                </span>
-              </Link>
-            ) : (
-              <a
-                href="/login"
-                className="rounded-full border border-blue-600 bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700 dark:border-blue-400 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
-              >
-                Login
-              </a>
-            )}
+            <a
+              href={`${OJS_URL}/login`}
+              className="rounded-full border border-blue-600 bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700 dark:border-blue-400 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
+            >
+              Login
+            </a>
           </nav>
         </div>
       </header>
@@ -277,10 +222,10 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
                     {/* Author + Affiliation */}
                     <div className="mt-2 flex flex-wrap items-center gap-1.5 text-sm text-blue-700 dark:text-blue-300">
                       <UserIcon className="h-3.5 w-3.5 shrink-0 text-blue-400 dark:text-blue-500" />
-                      <span className="font-semibold">{article.author.name}</span>
-                      {article.author.affiliation && (
+                      <span className="font-semibold">{article.authors[0]?.name}</span>
+                      {article.authors[0]?.affiliation && (
                         <span className="text-blue-500 dark:text-blue-400">
-                          &middot; {article.author.affiliation}
+                          &middot; {article.authors[0].affiliation}
                         </span>
                       )}
                     </div>
@@ -288,15 +233,14 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
                     {/* Publication year + volume */}
                     <div className="mt-1 flex items-center gap-3 text-xs text-blue-500 dark:text-blue-400">
                       <span>
-                        {article.createdAt.toLocaleDateString('en-NG', {
+                        {new Date(article.datePublished ?? '').toLocaleDateString('en-NG', {
                           year: 'numeric',
                           month: 'long',
                         })}
                       </span>
-                      {article.issue && (
+                      {article.volume != null && (
                         <span>
-                          Vol. {article.issue.volume}, No.{' '}
-                          {article.issue.issueNumber}
+                          Vol. {article.volume}, No. {article.issueNumber}
                         </span>
                       )}
                     </div>
