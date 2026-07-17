@@ -1,0 +1,52 @@
+# Render Blueprint for the OJS 3.4 backend (Hybrid Headless Architecture).
+#
+# Deploys OJS as a Docker web service backed by your Aiven MySQL database.
+# All secrets are supplied via Render environment variables / secrets —
+# NONE are hardcoded here. Set OJS_DB_PASSWORD (and optionally OJS_API_SECRET,
+# SMTP vars) in the Render dashboard before deploying.
+#
+# Deploy:  render blueprint launch   (or connect the repo in Render UI)
+#
+services:
+  - type: web
+    name: njpst-ojs
+    runtime: docker
+    dockerfilePath: ./ojs/Dockerfile
+    plan: starter
+    healthCheckPath: /
+    # Persistent disk for uploaded manuscripts, cache, and public files.
+    # OJS writes to disk — without this, files vanish on every deploy.
+    disk:
+      name: ojs-data
+      mountPath: /var/www/html/public
+      sizeGB: 10
+    envVars:
+      # ── Public OJS base URL (set to your OJS subdomain after DNS) ──
+      - key: OJS_BASE_URL
+        value: https://pin-e9fx.onrender.com
+      # ── Aiven MySQL connection (from your Aiven MySQL service) ──
+      - key: OJS_DB_HOST
+        value: mysql-786c04f-qrattend.i.aivencloud.com
+      - key: OJS_DB_PORT
+        value: "24181"
+      - key: OJS_DB_USER
+        value: avnadmin
+      - key: OJS_DB_NAME
+        value: defaultdb
+      # ⚠️ Set this as a Render SECRET, not a plain value:
+      - key: OJS_DB_PASSWORD
+        sync: false   # you will paste the Aiven MySQL password in Render UI
+      # ── REST API secret (generate a random string) ──
+      - key: OJS_API_SECRET
+        sync: false   # set a long random string in Render UI
+      # ── SMTP (optional — configure for transactional emails) ──
+      - key: OJS_SMTP_HOST
+        sync: false
+      - key: OJS_SMTP_PORT
+        value: "587"
+      - key: OJS_SMTP_USER
+        sync: false
+      - key: OJS_SMTP_PASS
+        sync: false
+      - key: OJS_SMTP_FROM
+        sync: false
