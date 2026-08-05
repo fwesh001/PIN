@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { BookIcon, FileIcon, InboxIcon, UserIcon } from '@/components/Icons';
 import ArchiveFilters from '@/components/ArchiveFilters';
 import Logo from '@/components/Logo';
+import Footer from '@/components/Footer';
 import { getPublishedSubmissions, searchSubmissions } from '@/lib/ojs/submissions';
 import { getPublishedIssues, extractVolumes } from '@/lib/ojs/issues';
 import type { NormalizedArticle } from '@/lib/ojs/types';
@@ -83,17 +84,17 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
     <div className="min-h-screen bg-blue-50 dark:bg-blue-950 transition-colors">
       <header className="w-full bg-white dark:bg-blue-950 border-b border-blue-100 dark:border-blue-900 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
+          <Link href="/" className="flex flex-col md:flex-row items-center gap-1.5 md:gap-3">
             <Logo className="h-10 w-auto" />
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 dark:text-blue-400">
+            <div className="flex flex-col items-center md:items-start text-center md:text-left">
+              <span className="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-blue-900 dark:text-blue-100 leading-none md:leading-tight">
                 Polymer Institute of Nigeria
-              </p>
-              <p className="text-lg font-extrabold text-blue-950 dark:text-blue-100">
+              </span>
+              <span className="text-[9px] sm:text-xs md:text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-widest mt-0.5 leading-none">
                 NJPST Archive
-              </p>
+              </span>
             </div>
-          </div>
+          </Link>
 
           <nav className="flex flex-wrap items-center gap-3 text-sm font-medium text-blue-900 dark:text-blue-200">
             <a
@@ -107,6 +108,12 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
               className="transition hover:text-blue-600 dark:hover:text-blue-400"
             >
               Archive
+            </a>
+            <a
+              href="/news-events"
+              className="transition hover:text-blue-600 dark:hover:text-blue-400"
+            >
+              News & Events
             </a>
             <a
               href={`${OJS_URL}/submission/wizard`}
@@ -283,6 +290,9 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
           </section>
         </div>
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

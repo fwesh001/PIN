@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import ThemeToggle from '@/components/ThemeToggle';
+
 
 /** OJS portal base URL for authenticated workflows (submit, login). */
 const OJS_URL = process.env.NEXT_PUBLIC_OJS_URL ?? 'https://pinjournal.org';
@@ -36,7 +36,6 @@ export default function MobileNav() {
 
   return (
     <div className="flex items-center gap-2 md:hidden">
-      <ThemeToggle />
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}

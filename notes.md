@@ -120,3 +120,150 @@ add logout and delete account
 
 for small screens use the C:\Users\zabdiel\Desktop\PIN\public\logo-mobile.png logo in the navbar and for larger screens use the C:\Users\zabdiel\Desktop\PIN\public\logo.png logo in the navbar
 
+## Footer
+Add   Contact Us page to the footer
+Address
+Mobile number
+Email address
+
+Details for the contact us page should be as follows:
+[Physical Address:
+
+National Headquarters:
+Suite 29 & 30, Decent Plaza, Behind G.S.S. Gwarimpa, Life camp, Abuja, FCT.
+Tel: +2348035472743
+Email: emailus@polymerinstitute.org.ng]
+
+## News & Events (new page)
+Recent News
+Upcoming Events
+
+# Guidelines for Reviewers & Authors
+
+## Reviewers Guidelines
+[Introduction
+The review process is an important aspect of the publication process of an article. It helps an editor in making decision on an article and also enables the author to improve the manuscript.
+Academic journal operates a blind peer review system.
+ 
+Before accepting to review a manuscript reviewers should ensure that:
+• the manuscript is within their area of expertise.
+• they can dedicate the appropriate time to conduct a critical review of the manuscript.
+ 
+Conflict of Interest
+“Conflict of interest (COI) exists when there is a divergence between an individual’s private interests (competing interests) and his or her responsibilities to scientific and publishing activities such that a reasonable observer might wonder if the individual’s behavior or judgment was motivated by considerations of his or her competing interests” WAME.
+ 
+”Reviewers should declare their conflicts of interest and recuse themselves from the peer-review process if a conflict exists”. ICMJE
+ 
+ 
+Confidentiality
+Manuscripts are confidential materials given to a reviewer in trust for the sole purpose of critical evaluation. Reviewers should ensure that the review processes is confidential. Details of the manuscript and the review process should remain confidential during and after the review process.
+ 
+Plagiarism
+‘The practice of taking someone else’s work or ideas and passing them off as one’s own’ Oxford Dictionaries
+ 
+It is unethical for reviewers to “use information obtained during the peer-review process for their own or any other person’s or organization’s advantage, or to disadvantage or discredit others” COPE
+ 
+Fairness
+Reviews should be honest and objective. Reviewers should not be influenced by:
+• The origin of the manuscript
+• Religious, political or cultural viewpoint of the author
+• Gender, race, ethnicity or citizenry of the author
+ 
+Review reports
+In evaluating a manuscript, reviewers should focus on the following:
+• Originality
+• Contribution to the field
+• Technical quality
+• Clarity of presentation
+• Depth of research
+ 
+Reviewers should also:
+• Observe that the author(s) have followed the instruction for authors, editorial policies and publication ethics.
+• Observe that the appropriate journal’s reporting guidelines is followed
+The report should be accurate, objective, constructive and unambiguous.  Comments should be backed by facts and constructive arguments with regards to the content of the manuscript. Reviewers should avoid using “hostile, derogatory and accusatory comments” PIE.
+ 
+Reviewers should not rewrite the manuscript; however necessary corrections and suggestions for improvements should be made.
+ 
+Timeliness
+Reviewers should only accept manuscript that they are confident that they can dedicate appropriate time in reviewing. Thus, reviewers should review and return manuscripts in a timely manner.
+ 
+Recommendations
+Reviewers’ recommendation should be either:
+• Accept
+• Requires minor corrections
+• Requires moderate revision
+• Requires major revision
+• Not suitable for the journal. Submit to another publication such as (suggest a journal):
+• Reject
+ 
+Recommendation should be backed with constructive arguments and facts based on the content of the manuscript.
+ 
+Resources
+• COPE Ethical Guidelines for Peer Reviewers
+• ICMJE - Responsibilities in the Submission and Peer-Review Process
+• WAME - Conflict of Interest in Peer-Reviewed Medical Journals]
+
+## Authors Guidelines
+[Preparation of Manuscript
+
+Manuscript should be written in the third person in an objective, formal and impersonal style. The SI system should be used for all scientific and laboratory data. The full stop should not be included in abbreviations, e.g. m (not m.) ppm (p.p.m.). All mathematical expression should be included in the manuscript. Care should be taken to distinguish between capital and lowercase letters, between zero (0) and letter (O), between the numeral (1) and letter (I), etc. Mathematical expressions should fit into a single column when set in type. Fractional powers are preferred to root signs and should always be used in more elaborate formulas. The solids (/) should be used instead of the horizontal lines for fractions whenever possible. Numbers that identify mathematical expressions should be enclosed in parentheses. Refer to equations in the text as “Eq. (1)”, etc., or “Equation (1)”, etc., at the beginning of a sentence.
+
+Content
+
+All pages must be numbered consecutively. A manuscript would normally include a title, abstract, keywords, introduction, materials and methods, results and discussion, conclusions and references.
+
+Title page. A short title which should be concise but informative must be provided. This should be followed by the names and full addresses of all authors. Telephone number and e-mail addresses of the corresponding authors must be included.
+The abstract should not be more than 220 words. It should give concise factual information about the objectives of the work, the methods used, the results obtained and the conclusions reached.
+Contributors should list below the abstract keywords for information retrieval purposes. The keywords should identify with main point in the paper.
+Abbreviations and Notations. Nomenclature must be listed at the beginning of the paper and should conform to the system of standard SI units. Acronyms and abbreviations should be spelt out in full at their first occurrence in the text.
+Papers should be typed single column, with double line spacing on one side of the paper only with ample margins on all sides. The text should be divided into sections each with a separate heading, numbered consecutively. The section heading be typed on a separate line and should be underlined.
+Conclusions and Recommendations. The conclusions should summarize the findings, clearly stating the contributions and their relevance. Recommendations for implementation or for areas of further work on the subject matter should be made.
+These should be brief and relevant. The names of funding organizations should be written in full. Dedications are not permitted.
+References to publish work should be indicated at the appropriate place in the text, according to the Harvard system (i.e. using author(s)’ name(s) and date), with a reference list in alphabetical order, at the end of the paper. All references in this list should be indicated at some point in the text and vice versa. Papers by more than two authors but with same first author should be listed by year sequence and alphabetically within each year.
+Examples of layout of reference are given below.
+
+Book
+
+Onyeyili, I.O. (2003) Analysis of Statistically Determine Structures. El’ Demak Publishers, Enugu.
+
+Thesis
+
+Ihueze, C.C. (2005) Optimum Buckling Response Model of GRP Composites. PhD Thesis, University of Nigeria, Nsukka.
+
+Journal
+
+Umerie, S.C., Ogbuagu, A.S., Ogbuagu, J.O. (2004) Stabilisation of palm oils by using Ficus exasprata leaves in local processing methods. Bioresource Technology, 94: 307-310.
+
+Conference
+
+Menkiti, M.C., Ugodulunwa, F.X.O., Onukwuli, O.D. (2007) Studies on the coagulation and flocculation of coal washery effluent. Proceedings of the 37th annual conference of the Nigerian Society of Chemical Engineers, Enugu, 22-24 November, pp169-184.]
+
+## Policies & Guidelines (new page)
+[Scope of the Journal
+
+The Journal is devoted to publishing original research and short communications in all aspects of Polymer Science and Technology (Engineering). Articles in the related discipline of materials science technology and application will also be considered for publication.]
+
+
+[Copyright: By submitting a manuscript, the authors agree that the copyright for the article is transferred to the Polymer Institute of Nigeria, if and when the article is accepted for publication.]
+
+Terms of Use
+[Terms and Conditions (Replace AJOL with NJPST)
+Any uses and/or copies of the content of participating AJOL journals in whole or in part must include the customary bibliographic citation, including author attribution, date and article title. Use may also require permission from the relevant publisher.
+
+AJOL accepts content from journals in good faith, with the understanding that the material to be placed on the AJOL website contains nothing that is libellous, illegal, or an infringement of anyone's copyright or other rights. AJOL retains the right to refuse to place any content on the website, and to remove anything that it considers to be unsuitable.
+
+In no event shall AJOL be liable for any special, incidental, indirect, or consequential damages of any kind arising out of or in connection with the use of the articles or other material derived from the AJOL website, whether or not advised of the possibility of damage, and on any theory of liability.
+
+This service is provided "as is" without warranty of any kind, either expressed or implied, including, but not limited to, the implied warranties of merchantability, fitness for a particular purpose, or non-infringement. AJOL makes no warranty of any kind, either express or implied, regarding the quality, accuracy, availability, or validity of the data or information in the website or of any other site to which it may be linked. While every effort is made by AJOL to see that no inaccurate or misleading data, opinion or statement appears on this website, they wish to make it clear that the data and opinions appearing in the articles and advertisements herein are the responsibility of the contributor or advertiser concerned.
+
+The AJOL website is continuously under development and changes may be made in the website and these publications at any time.]
+
+Make the [2. MINIMALIST HERO SECTION] use this image for the background: C:\Users\zabdiel\Desktop\PIN\public\hero-bg.jpg
+
+Fix the spacing issue in the footer from the contact us page to  the Guidelines section 
+it should match the spacing of the previous sections in the footer (about us , editorial board. etc )
+
+I Found out why the Osj backend wasnt working, it was because the plan i was using was the free plan which doesnt allow for custom docker images and containers.
+So i switched to a different paltform.
+
+Now read the documentation for the new platform to see if it allows for custom docker images and containers. (C:\Users\zabdiel\Desktop\PIN\llms-full.md)

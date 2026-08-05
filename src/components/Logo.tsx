@@ -22,9 +22,6 @@ export default function Logo({
   style,
 }: LogoProps) {
   return (
-    <picture>
-      <source media="(max-width: 767px)" srcSet="/logo-mobile.png" />
-      <img src="/logo.png" alt={alt} className={className} style={style} />
-    </picture>
+    <img src="/logo.png" alt={alt} className={className} style={style} />
   );
 }
