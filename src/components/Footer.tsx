@@ -1,8 +1,47 @@
 import Link from 'next/link';
+import type { ReactNode } from 'react';
+
+/**
+ * Footer link with a white "ripple" underline that expands from the centre
+ * out to both sides on hover.
+ */
+function FooterLink({ href, children }: { href: string; children: ReactNode }) {
+  const className =
+    'group relative inline-block font-mono font-bold text-blue-300 hover:text-white transition-colors';
+  const ripple = (
+    <>
+      {/* Left-side line origin */}
+      <span
+        aria-hidden="true"
+        className="absolute bottom-0 left-1/2 w-1/2 h-px bg-white/70 rounded-full origin-right scale-x-0 transition-transform duration-300 group-hover:scale-x-100"
+      />
+      {/* Right-side line origin */}
+      <span
+        aria-hidden="true"
+        className="absolute bottom-0 right-1/2 w-1/2 h-px bg-white/70 rounded-full origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"
+      />
+    </>
+  );
+
+  if (href.startsWith('/')) {
+    return (
+      <Link href={href} className={className}>
+        {children}
+        {ripple}
+      </Link>
+    );
+  }
+  return (
+    <a href={href} className={className}>
+      {children}
+      {ripple}
+    </a>
+  );
+}
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-blue-950 text-blue-200 mt-auto">
+    <footer className="w-full bg-slate-950 text-blue-200 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-10">
           {/* Column 1 — About */}
@@ -24,14 +63,10 @@ export default function Footer() {
             </h4>
             <ul className="space-y-1.5 text-sm text-blue-300">
               <li>
-                <Link href="/editorial-board" className="hover:text-white transition-colors">
-                  Editor-in-Chief
-                </Link>
+                <FooterLink href="/editorial-board">Editor-in-Chief</FooterLink>
               </li>
               <li>
-                <Link href="/editorial-board" className="hover:text-white transition-colors">
-                  Associate Editors
-                </Link>
+                <FooterLink href="/editorial-board">Associate Editors</FooterLink>
               </li>
             </ul>
           </div>
@@ -43,9 +78,9 @@ export default function Footer() {
             </h4>
             <ul className="space-y-1.5 text-sm text-blue-300">
               <li>
-                <Link href="/guidelines?tab=reviewers" className="hover:text-white transition-colors">
+                <FooterLink href="/guidelines?tab=reviewers">
                   Reviewers Guidelines
-                </Link>
+                </FooterLink>
               </li>
             </ul>
           </div>
@@ -57,22 +92,17 @@ export default function Footer() {
             </h4>
             <ul className="space-y-1.5 text-sm text-blue-300">
               <li>
-                <Link
-                  href="/dashboard/author/submit"
-                  className="hover:text-white transition-colors"
-                >
+                <FooterLink href="/dashboard/author/submit">
                   Submit Manuscript
-                </Link>
+                </FooterLink>
               </li>
               <li>
-                <a href="/guidelines?tab=authors" className="hover:text-white transition-colors">
+                <FooterLink href="/guidelines?tab=authors">
                   Author Guidelines
-                </a>
+                </FooterLink>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  APC & Waiver Policy
-                </a>
+                <FooterLink href="#">APC &amp; Waiver Policy</FooterLink>
               </li>
             </ul>
           </div>
@@ -80,7 +110,7 @@ export default function Footer() {
           {/* Column 5 — Indexing */}
           <div className="space-y-3">
             <h4 className="text-sm font-bold text-white uppercase tracking-wider">
-              Indexing & Compliance
+              Indexing &amp; Compliance
             </h4>
             <ul className="space-y-1.5 text-sm text-blue-300">
               <li>Google Scholar</li>
@@ -98,19 +128,13 @@ export default function Footer() {
             </h4>
             <ul className="space-y-1.5 text-sm text-blue-300">
               <li>
-                <Link href="/contact" className="hover:text-white transition-colors">
-                  Address
-                </Link>
+                <FooterLink href="/contact">Address</FooterLink>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-white transition-colors">
-                  Email
-                </Link>
+                <FooterLink href="/contact">Email</FooterLink>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-white transition-colors">
-                  Via Phone
-                </Link>
+                <FooterLink href="/contact">Via Phone</FooterLink>
               </li>
             </ul>
           </div>
@@ -118,18 +142,14 @@ export default function Footer() {
           {/* Column 7 — News & Events */}
           <div className="space-y-3">
             <h4 className="text-sm font-bold text-white uppercase tracking-wider">
-              News & Events
+              News &amp; Events
             </h4>
             <ul className="space-y-1.5 text-sm text-blue-300">
               <li>
-                <Link href="/news-events" className="hover:text-white transition-colors">
-                  Recent News
-                </Link>
+                <FooterLink href="/news-events">Recent News</FooterLink>
               </li>
               <li>
-                <Link href="/news-events" className="hover:text-white transition-colors">
-                  Upcoming Events
-                </Link>
+                <FooterLink href="/news-events">Upcoming Events</FooterLink>
               </li>
             </ul>
           </div>
@@ -141,19 +161,15 @@ export default function Footer() {
             </h4>
             <ul className="space-y-1.5 text-sm text-blue-300">
               <li>
-                <Link href="/policies?tab=scope" className="hover:text-white transition-colors">
+                <FooterLink href="/policies?tab=scope">
                   Scope of the Journal
-                </Link>
+                </FooterLink>
               </li>
               <li>
-                <Link href="/policies?tab=terms" className="hover:text-white transition-colors">
-                  Terms of Use
-                </Link>
+                <FooterLink href="/policies?tab=terms">Terms of Use</FooterLink>
               </li>
               <li>
-                <Link href="/policies?tab=copyright" className="hover:text-white transition-colors">
-                  Copyright
-                </Link>
+                <FooterLink href="/policies?tab=copyright">Copyright</FooterLink>
               </li>
             </ul>
           </div>
@@ -165,21 +181,22 @@ export default function Footer() {
             </h4>
             <ul className="space-y-1.5 text-sm text-blue-300">
               <li>
-                <Link href="/guidelines?tab=reviewers" className="hover:text-white transition-colors">
+                <FooterLink href="/guidelines?tab=reviewers">
                   Reviewers Guidelines
-                </Link>
+                </FooterLink>
               </li>
               <li>
-                <Link href="/guidelines?tab=authors" className="hover:text-white transition-colors">
+                <FooterLink href="/guidelines?tab=authors">
                   Authors Guidelines
-                </Link>
+                </FooterLink>
               </li>
             </ul>
           </div>
-        </div>
+          </div>
+
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-blue-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-blue-400">
+        <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-blue-400">
           <p>
             © {new Date().getFullYear()} Polymer Institute of Nigeria.
             All rights reserved.

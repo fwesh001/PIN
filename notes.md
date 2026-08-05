@@ -267,3 +267,11 @@ I Found out why the Osj backend wasnt working, it was because the plan i was usi
 So i switched to a different paltform.
 
 Now read the documentation for the new platform to see if it allows for custom docker images and containers. (C:\Users\zabdiel\Desktop\PIN\llms-full.md)
+
+The footer section should have a dark shade backgroung 
+Also add another hover effect for the links in the footer section should be added (a ripple line effect extending to both sides when the user hovers over the links in the footer section )
+
+For footer section the links should be in a bold monospace font 
+Also list the fonts used in the project and their sources in the footer section (for example: font-family: 'Inter', sans-serif; source: Google Fonts)
+
+Use Plus Jakarta Sans for h1 & h2 in the project
