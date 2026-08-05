@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Logo from '@/components/Logo';
@@ -18,6 +18,14 @@ const tabs: { key: TabKey; label: string }[] = [
 ];
 
 export default function PoliciesPage() {
+  return (
+    <Suspense fallback={null}>
+      <PoliciesContent />
+    </Suspense>
+  );
+}
+
+function PoliciesContent() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<TabKey>('scope');
   const [mounted, setMounted] = useState(false);

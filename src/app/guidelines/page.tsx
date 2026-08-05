@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Logo from '@/components/Logo';
@@ -17,6 +17,14 @@ const tabs: { key: TabKey; label: string }[] = [
 ];
 
 export default function GuidelinesPage() {
+  return (
+    <Suspense fallback={null}>
+      <GuidelinesContent />
+    </Suspense>
+  );
+}
+
+function GuidelinesContent() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<TabKey>('reviewers');
   const [mounted, setMounted] = useState(false);
