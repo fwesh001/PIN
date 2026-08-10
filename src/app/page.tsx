@@ -3,8 +3,13 @@ import { GlobeIcon, ScalesIcon, IdBadgeIcon, BookIcon, FileIcon, EyeIcon, Downlo
 import Logo from '@/components/Logo';
 import MobileNav from '@/components/MobileNav';
 import Footer from '@/components/Footer';
-import { getPublishedSubmissions, getPublishedSubmissionsByIssue } from '@/lib/ojs/submissions';
-import { getCurrentIssue } from '@/lib/ojs/issues';
+import {
+  mockIssue,
+  mockFeaturedArticles,
+  mockPublishedArticles,
+  MOCK_ISSUE_PDF,
+  MOCK_ARTICLE_PDF,
+} from '@/lib/mockData';
 
 /** OJS portal base URL for authenticated workflows (submit, login). */
 const OJS_URL = process.env.NEXT_PUBLIC_OJS_URL ?? 'https://pinjournal.org';
@@ -15,6 +20,9 @@ const OJS_URL = process.env.NEXT_PUBLIC_OJS_URL ?? 'https://pinjournal.org';
  * Phase 3 UI/UX: Monochromatic Royal Blue Design System.
  * Fully server-rendered for optimal SEO / Scholar / Scopus / DOAJ indexing.
  *
+ * NOTE: The featured volume and published-articles data below are HARDCODED
+ * mock values used to preview the layout while the OJS backend is offline.
+ *
  * Layout sections:
  *   1. Top Navigation Header
  *   2. Minimalist Hero + Search
@@ -23,32 +31,10 @@ const OJS_URL = process.env.NEXT_PUBLIC_OJS_URL ?? 'https://pinjournal.org';
  *   5. Published Articles Feed
  *   6. Footer
  */
-export default async function HomePage() {
-  // ── Server-side data fetch from OJS (graceful empty states if OJS is offline)
-  let publishedArticles: Array<import('@/lib/ojs/types').NormalizedArticle> = [];
-  let latestIssue: import('@/lib/ojs/types').NormalizedIssue | null = null;
-  let featuredArticles: Array<import('@/lib/ojs/types').NormalizedArticle> = [];
-
-  try {
-    const [subs, issue] = await Promise.all([
-      getPublishedSubmissions({ count: 50 }),
-      getCurrentIssue(),
-    ]);
-    publishedArticles = subs;
-    latestIssue = issue;
-
-    // Derive the featured volume article list for the split-card section.
-    if (issue) {
-      featuredArticles = await getPublishedSubmissionsByIssue(issue, 3);
-    }
-  } catch (err) {
-    // If OJS is unreachable, avoid a 500 — render empty states and log.
-    // eslint-disable-next-line no-console
-    console.error('OJS API error (homepage):', err);
-    publishedArticles = [];
-    latestIssue = null;
-    featuredArticles = [];
-  }
+export default function HomePage() {
+  const latestIssue = mockIssue;
+  const featuredArticles = mockFeaturedArticles;
+  const publishedArticles = mockPublishedArticles;
 
   return (
     <div className="min-h-screen flex flex-col bg-blue-50 dark:bg-blue-950 transition-colors">
@@ -61,7 +47,7 @@ export default async function HomePage() {
           <Link href="/" className="flex flex-col md:flex-row items-center gap-1.5 md:gap-3">
             <Logo className="h-10 w-auto sm:h-12" />
             <span className="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-blue-900 dark:text-blue-100 text-center md:text-left leading-none md:leading-tight">
-              Polymer Institute of Nigeria
+                    Nigerian Journal of Polymer Science &amp; Technology
             </span>
           </Link>
 
@@ -175,31 +161,43 @@ export default async function HomePage() {
           </h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-            {/* Left — Geometric cover placeholder */}
-            <div className="relative bg-gradient-to-br from-blue-600 to-blue-900 dark:from-blue-800 dark:to-blue-950 rounded-2xl p-8 sm:p-12 flex flex-col justify-center items-center text-center shadow-xl overflow-hidden">
-              {/* Decorative geometric shapes */}
-              <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-              <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border-2 border-white/10 rounded-lg rotate-12" />
+            {/* Left — Cover image + volume info card */}
+            <div className="relative bg-gradient-to-br from-blue-600 to-blue-900 dark:from-blue-800 dark:to-blue-950 rounded-2xl shadow-xl overflow-hidden flex flex-col sm:flex-row items-stretch">
+              {/* LHS — Cover picture */}
+              <div className="sm:w-1/2 flex-shrink-0 flex items-center justify-center p-4">
+                <img
+                  src="/uploads/Vol.%2015.jpg"
+                  alt={`Cover of Volume ${latestIssue.volume}, Issue ${latestIssue.issueNumber}`}
+                  className="h-full w-full max-h-[360px] object-cover rounded-xl shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
+                />
+              </div>
 
-              <div className="relative z-10 space-y-3">
-                <p className="text-blue-200 text-sm font-semibold tracking-widest uppercase">
-                  Nigerian Journal of Polymer Science &amp; Technology
-                </p>
-                <p className="text-white text-4xl sm:text-5xl font-extrabold tracking-tight">
-                  Vol. {latestIssue?.volume ?? '15'}
-                </p>
-                <p className="text-blue-200 text-lg font-medium">
-                  Issue {latestIssue?.issueNumber ?? '2'}&ensp;·&ensp;
-                  {latestIssue?.datePublished
-                    ? new Date(latestIssue.datePublished).getFullYear()
-                    : new Date().getFullYear()}
-                </p>
-                <div className="pt-4">
-                  <span className="inline-block px-4 py-1.5 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold rounded-full border border-white/20">
-                    Polymer Institute of Nigeria
-                  </span>
+              {/* RHS — Volume info + download button */}
+              <div className="sm:w-1/2 flex flex-col justify-center items-center text-center p-8 sm:p-10 gap-6">
+                <div className="space-y-3">
+                  <p className="text-blue-200 text-xs font-semibold tracking-widest uppercase">
+                    Nigerian Journal of Polymer Science &amp; Technology
+                  </p>
+                  <p className="text-white text-4xl sm:text-5xl font-extrabold tracking-tight">
+                    Vol. {latestIssue.volume}
+                  </p>
+                  <p className="text-blue-200 text-lg font-medium">
+                    Issue {latestIssue.issueNumber}&ensp;·&ensp;{latestIssue.year}
+                  </p>
+                  <div className="pt-2">
+                    <span className="inline-block px-4 py-1.5 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold rounded-full border border-white/20">
+                      Polymer Institute of Nigeria
+                    </span>
+                  </div>
                 </div>
+                <a
+                  href={MOCK_ISSUE_PDF}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white text-blue-900 hover:bg-blue-50 font-semibold text-sm transition-all hover:shadow-lg active:scale-[0.98]"
+                >
+                  <DownloadIcon className="h-4 w-4" /> Download Full Issue
+                </a>
               </div>
             </div>
 
@@ -292,21 +290,17 @@ export default async function HomePage() {
                   key={article.id}
                   className="group relative flex flex-col overflow-hidden rounded-2xl border border-blue-200 dark:border-blue-800 bg-white dark:bg-blue-900/30 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1"
                 >
-                  {/* Document-style header — bold centered file icon */}
-                  <div className="relative flex h-36 items-center justify-center overflow-hidden border-b border-blue-100 bg-gradient-to-b from-blue-50 to-blue-100 dark:border-blue-800 dark:from-blue-900/40 dark:to-blue-950/60">
-                    {/* Subtle corner accents */}
-                    <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-blue-200/40 dark:bg-blue-800/30" />
-                    <div className="absolute -bottom-10 -left-10 h-28 w-28 rounded-full bg-blue-200/30 dark:bg-blue-800/20" />
+                  {/* Document-style header — cover photo background with bold centered file icon */}
+                  <div className="relative flex h-36 items-center justify-center overflow-hidden border-b border-blue-100 bg-cover bg-center dark:border-blue-800"
+                    style={{ backgroundImage: `url('/uploads/article.jpg')` }}
+                  >
+                    {/* Dark legibility overlay so the icon stays visible over the photo */}
+                    <div className="absolute inset-0 bg-blue-950/40 dark:bg-blue-950/60" aria-hidden="true" />
 
                     {/* Bold document icon, centered */}
                     <div className="relative z-10 flex h-20 w-20 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-900/20 ring-4 ring-white/70 dark:ring-blue-950/40">
                       <FileIcon className="h-10 w-10" strokeWidth={2.5} />
                     </div>
-
-                    {/* Cover letter badge — design placeholder (static). */}
-                    <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-blue-500 ring-1 ring-blue-200 dark:bg-blue-800/50 dark:text-blue-300 dark:ring-blue-700">
-                      <FileIcon className="h-3.5 w-3.5" /> Cover Letter
-                    </span>
                   </div>
 
                   {/* Card body */}
@@ -365,7 +359,7 @@ export default async function HomePage() {
                     {/* Action row — icons at the bottom (larger screens) */}
                     <div className="mt-auto flex flex-wrap items-center gap-2 pt-5">
                       <a
-                        href={`/article/${article.id}`}
+                        href={`/viewer/${article.id}`}
                         aria-label="Read article"
                         className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition-all hover:bg-blue-700 active:scale-95 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
                       >
@@ -392,7 +386,6 @@ export default async function HomePage() {
             <p className="text-xs text-blue-400 dark:text-blue-500 text-center pt-8">
               {publishedArticles.length} published article
               {publishedArticles.length !== 1 ? 's' : ''} · ISSN pending ·
-              Hosted at journal.polymerinstitute.org.ng
             </p>
           )}
 </div>

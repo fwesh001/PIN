@@ -52,7 +52,7 @@ export default function Footer() {
             <p className="text-sm leading-relaxed text-blue-300">
               The Nigerian Journal of Polymer Science and Technology is
               the open-access academic journal of the Polymer Institute
-              of Nigeria (PIN), advancing polymer research since 1994.
+              of Nigeria (PIN), advancing polymer research since 1989.
             </p>
           </div>
 

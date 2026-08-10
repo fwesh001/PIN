@@ -209,7 +209,9 @@ export default function NewsEventsPage() {
       </header>
 
       {/* Hero Header */}
-      <section className="w-full bg-blue-50 dark:bg-blue-950/40 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+      <section className="w-full bg-blue-50 dark:bg-blue-950/40 py-12 sm:py-16 px-4 sm:px-6 lg:px-8"
+        style={{ backgroundImage: `url('/hero-bg.jpg')` }}
+      >
         <div className="max-w-4xl mx-auto text-center space-y-4">
           <h1 className="text-3xl sm:text-5xl font-extrabold text-blue-950 dark:text-blue-100 leading-tight tracking-tight">
             News & Events

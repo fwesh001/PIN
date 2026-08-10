@@ -131,7 +131,7 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
         </div>
       </header>
 
-      <header className="border-b border-blue-100 bg-blue-50/70 dark:border-blue-800 dark:bg-blue-950/70">
+      <header className="w-full bg-white dark:bg-blue-950 border-b border-blue-100 dark:border-blue-900 sticky top-0 z-50">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold text-blue-950 dark:text-blue-100">

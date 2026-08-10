@@ -275,3 +275,51 @@ For footer section the links should be in a bold monospace font
 Also list the fonts used in the project and their sources in the footer section (for example: font-family: 'Inter', sans-serif; source: Google Fonts)
 
 Use Plus Jakarta Sans for h1 & h2 in the project
+
+### Plan to mock up the current issue by hardcoding the data for the author dashboard page and the submission page to see how it will look like when the backend is working
+
+
+C:\Users\zabdiel\Desktop\PIN\public\uploads\a9367e15-9921-4360-badc-d3cafb7dabb8.pdf (use as currrent issue in the featured volume section of the homepage)
+C:\Users\zabdiel\Desktop\PIN\public\uploads\b5d87bb0-3dd6-4f22-99fa-f54a33c09f1e.pdf (use as published article in  the published articles section of the homepage)
+
+C:\Users\zabdiel\Desktop\PIN\.agents\skills\idea\SKILL.md
+
+Design for the featured volume section [export default function HomePage() {
+  const latestIssue: import('@/lib/ojs/types').NormalizedIssue = {
+    id: '1',
+    volume: 15,
+    issueNumber: 2,
+    year: 2026,
+    title: 'Volume 15, Issue 2',
+    datePublished: '2026-03-15',
+    isCurrent: true,
+  };] Just this card it will have two sides, the left side will have the cover picture and the right side will have the information about the volume and a download button for the volume. The download button should be centered below the information about the volume.
+use (C:\Users\zabdiel\Desktop\PIN\public\uploads\Vol. 15.jpg) as the cover picture for the featured volume section of the homepage
+Cover picture (lhs)  Info (rhs)
+************          xxxxxx
+|           |        xxxxxxx
+|           |           xxxxxx           
+|           |                  
+************               
+
+           Download btn (center)
+For the cover give it rounded corners, shadow effect and a hover effect (when the user hovers over the cover picture.
+
+For the design of the published articles section of the homepage.
+remove the floating cover-letter badge on the articles card [{/* Cover letter badge — design placeholder (static). */}
+                    <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-blue-500 ring-1 ring-blue-200 dark:bg-blue-800/50 dark:text-blue-300 dark:ring-blue-700">
+                      <FileIcon className="h-3.5 w-3.5" /> Cover Letter
+                    </span>]
+for the use (C:\Users\zabdiel\Desktop\PIN\public\uploads\article.jpg) as the cover picture for the published articles section of the homepage while keeping the docment icon [{/* Document-style header — bold centered file icon */}
+                  <div className="relative flex h-36 items-center justify-center overflow-hidden border-b border-blue-100 bg-gradient-to-b from-blue-50 to-blue-100 dark:border-blue-800 dark:from-blue-900/40 dark:to-blue-950/60">
+                    {/* Subtle corner accents */}
+                    <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-blue-200/40 dark:bg-blue-800/30" />
+                    <div className="absolute -bottom-10 -left-10 h-28 w-28 rounded-full bg-blue-200/30 dark:bg-blue-800/20" />
+
+                    {/* Bold document icon, centered */}
+                    <div className="relative z-10 flex h-20 w-20 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-900/20 ring-4 ring-white/70 dark:ring-blue-950/40">
+                      <FileIcon className="h-10 w-10" strokeWidth={2.5} />
+                    </div>]
+
+
+Plan to implement navgation.tsx

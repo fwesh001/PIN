@@ -91,7 +91,9 @@ function GuidelinesContent() {
       </header>
 
       {/* Hero Header */}
-      <section className="w-full bg-blue-50 dark:bg-blue-950/40 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+      <section className="w-full bg-blue-50 dark:bg-blue-950/40 py-12 sm:py-16 px-4 sm:px-6 lg:px-8"
+        style={{ backgroundImage: `url('/hero-bg.jpg')` }}
+      >
         <div className="max-w-4xl mx-auto text-center space-y-4">
           <h1 className="text-3xl sm:text-5xl font-extrabold text-blue-950 dark:text-blue-100 leading-tight tracking-tight">
             Guidelines
@@ -296,6 +298,7 @@ function GuidelinesContent() {
               <div className="prose prose-blue dark:prose-invert max-w-none space-y-6">
                 {/* Preparation of Manuscript */}
                 <section className="space-y-4">
+                  <h3 className="text-lg font-bold text-blue-950 dark:text-blue-100"><b className="font-mono font-weight=800">*</b>INSTRUCTIONS FOR AUTHORS<b className="font-mono font-weight=800">*</b></h3>
                   <h3 className="text-lg font-semibold text-blue-950 dark:text-blue-100">Preparation of Manuscript</h3>
                   <p className="text-blue-700 dark:text-blue-300 leading-relaxed">
                     Manuscript should be written in the third person in an objective, formal and impersonal style. The SI system should be used for all scientific and laboratory data. The full stop should not be included in abbreviations, example m (not m.) ppm not (p.p.m.). All mathematical expressions should be included in the manuscript. Care should be taken to distinguish between capital and lowercase letters, between zero (0) and letter (O), between the numeral (1) and letter (I), etc. Mathematical expressions should fit into a single column when set in type. Fractional powers are preferred to root signs and should always be used in more elaborate formulas. The solids (/) should be used instead of the horizontal lines for fractions whenever possible. Numbers that identify mathematical expressions should be enclosed in parentheses. Refer to equations in the text as "Eq. (1)", etc., or "Equation (1)", etc., at the beginning of a sentence.
