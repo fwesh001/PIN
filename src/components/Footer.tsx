@@ -198,14 +198,18 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-blue-400">
           <p>
-            © {new Date().getFullYear()} Polymer Institute of Nigeria.
-            All rights reserved.
+            © 2026 Nigerian Journal of Polymer Science &amp; Technology. All rights reserved.
           </p>
           <p>
             Developed by{' '}
-            <span className="text-blue-300">
+            <a
+              href="https://www.zabdiel.tech"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-300 hover:underline"
+            >
               zabdiel
-            </span>
+            </a>
           </p>
         </div>
       </div>
