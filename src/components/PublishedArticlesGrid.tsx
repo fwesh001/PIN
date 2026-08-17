@@ -181,7 +181,7 @@ export default function PublishedArticlesGrid({ articles }: PublishedArticlesGri
               <div className="mt-6 flex flex-wrap items-center gap-2">
                 <a
                   href={`/viewer/${activeArticle.id}`}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-blue-700 active:scale-95 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-600 active:scale-95 dark:bg-blue-500 dark:text-white dark:hover:bg-blue-400"
                 >
                   <EyeIcon className="h-4 w-4" /> Read
                 </a>
@@ -189,14 +189,14 @@ export default function PublishedArticlesGrid({ articles }: PublishedArticlesGri
                   href={activeArticle.pdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 transition-all hover:bg-blue-100 active:scale-95 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-800"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-800 transition-all hover:bg-blue-100 active:scale-95 dark:border-blue-600 dark:bg-blue-950/40 dark:text-blue-200 dark:hover:bg-blue-900"
                 >
                   <DownloadIcon className="h-4 w-4" /> Download
                 </a>
                 <button
                   type="button"
                   onClick={() => setActiveArticle(null)}
-                  className="ml-auto rounded-md px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-blue-800"
+                  className="ml-auto rounded-md px-3 py-2 text-sm text-blue-700 hover:bg-blue-100 dark:text-blue-200 dark:hover:bg-blue-800"
                 >
                   Close
                 </button>
