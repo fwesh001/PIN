@@ -34,7 +34,7 @@ const OJS_URL = process.env.NEXT_PUBLIC_OJS_URL ?? 'https://pinjournal.org';
  */
 export default function HomePage() {
   const latestIssue = mockIssue;
-  const featuredArticles = mockFeaturedArticles;
+  const featuredArticles = mockPublishedArticles;
   const publishedArticles = mockPublishedArticles;
 
   return (
@@ -55,7 +55,7 @@ export default function HomePage() {
           {/* Right — Nav links */}
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-blue-900 dark:text-blue-200">
             <a
-              href="/archive"
+              href="/viewer/current-issue"
               className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors underline-offset-4 hover:underline"
             >
               Current Issue
@@ -225,7 +225,7 @@ export default function HomePage() {
                         </span>
                         <div>
                           <a
-                            href={`/article/${article.id}`}
+                            href={`/viewer/${article.id}`}
                             className="text-sm sm:text-base font-semibold text-blue-950 dark:text-blue-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug"
                           >
                             {article.title}
