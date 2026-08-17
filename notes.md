@@ -322,4 +322,14 @@ for the use (C:\Users\zabdiel\Desktop\PIN\public\uploads\article.jpg) as the cov
                     </div>]
 
 
+
 Plan to implement navgation.tsx
+Like a universal funtion just like the footer 
+
+But this will the dynamic : depending on the page this  
+
+add btn for abstract in the Published Articles card section of the homepage[abstract,read,download], when the user clicks on the btn it should open a modal showing the abstract of the article with two actions btn at the end read and download.
+
+mock up data for the abstract of the article in the modal for now until the backend is working, and the modal should include the name of the article, the author(s) name(s) affiliation(s) date published,views,keywords and the abstract of the article.
+
+the search archive what does it query now 
