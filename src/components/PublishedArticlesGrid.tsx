@@ -105,14 +105,14 @@ export default function PublishedArticlesGrid({ articles }: PublishedArticlesGri
                     type="button"
                     onClick={() => setActiveArticle(article)}
                     aria-label="View abstract"
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 px-3 py-2 text-xs font-semibold text-blue-700 transition-all hover:bg-blue-100 active:scale-95 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-blue-300 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-800 transition-all hover:bg-blue-100 active:scale-95 dark:border-blue-600 dark:bg-blue-950/40 dark:text-blue-200 dark:hover:bg-blue-900"
                   >
                     <BookIcon className="h-4 w-4" /> Abstract
                   </button>
                   <a
                     href={`/viewer/${article.id}`}
                     aria-label="Read article"
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition-all hover:bg-blue-700 active:scale-95 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-blue-700 px-3 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:bg-blue-600 active:scale-95 dark:bg-blue-500 dark:text-white dark:hover:bg-blue-400"
                   >
                     <EyeIcon className="h-4 w-4" /> Read
                   </a>
@@ -121,7 +121,7 @@ export default function PublishedArticlesGrid({ articles }: PublishedArticlesGri
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Download PDF"
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 px-3 py-2 text-xs font-semibold text-blue-700 transition-all hover:bg-blue-100 active:scale-95 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-blue-300 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-800 transition-all hover:bg-blue-100 active:scale-95 dark:border-blue-600 dark:bg-blue-950/40 dark:text-blue-200 dark:hover:bg-blue-900"
                   >
                     <DownloadIcon className="h-4 w-4" /> Download
                   </a>
