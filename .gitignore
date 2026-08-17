@@ -10,14 +10,9 @@ SCOPE OF WORK.pdf
 PinJournal_Follow-up.pdf
 .github/copilot-instructions.md
 supabase/init.sql
-notes.md
+
 
 # Local Postgres data directory (trash)
 local_db_data/
 
-# Runtime uploads
-public/uploads/
-
-
-notes.md
 llms-full.md
