@@ -1,10 +1,6 @@
-"use client';
+"use client";
 
 import { useEffect, useState } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
-import 'pdfjs-dist/build/pdf.worker.min.mjs'; // Ensure worker is loaded
-
-pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 interface PdfViewerProps {
   fileUrl: string;
@@ -18,6 +14,31 @@ export default function PdfViewer({ fileUrl, title }: PdfViewerProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Dynamically load react-pdf (and configure pdfjs) only on the client
+  // to avoid server-side evaluation of browser-only modules.
+  const [pdfLib, setPdfLib] = useState<any>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const lib = await import('react-pdf');
+        // `lib.pdfjs` is the pdfjs instance used by react-pdf
+        if (lib?.pdfjs) {
+          lib.pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+        }
+        if (mounted) setPdfLib(lib);
+      } catch (e: any) {
+        console.error('Failed to load PDF viewer libs', e);
+        if (mounted) setError(String(e?.message ?? e));
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // Document callbacks (unchanged)
   function onDocumentLoadSuccess({ numPages: np }: { numPages: number }) {
     setNumPages(np);
     setLoading(false);
@@ -49,6 +70,11 @@ export default function PdfViewer({ fileUrl, title }: PdfViewerProps) {
   }
 
   const progress = numPages ? (pageNumber / numPages) * 100 : 0;
+
+  const Document = pdfLib?.Document;
+  const Page = pdfLib?.Page;
+
+  const viewerLoaded = Boolean(Document && Page && !error);
 
   return (
     <div className="flex h-screen flex-col bg-blue-50 dark:bg-blue-950">
@@ -137,19 +163,25 @@ export default function PdfViewer({ fileUrl, title }: PdfViewerProps) {
           </div>
         )}
         {!error && (
-          <Document
-            file={fileUrl}
-            onLoadSuccess={onDocumentLoadSuccess}
-            onLoadError={onDocumentLoadError}
-            loading={<div className="text-center text-blue-600 dark:text-blue-400">Loading PDF…</div>}
-          >
-            <Page
-              pageNumber={pageNumber}
-              width={scale * 794}
-              className="shadow-xl rounded-lg bg-white dark:bg-blue-900"
-              renderTextLayer={false}
-            />
-          </Document>
+          <div className="w-full flex items-center justify-center">
+            {!viewerLoaded ? (
+              <div className="text-center text-blue-600 dark:text-blue-400">Loading PDF viewer…</div>
+            ) : (
+              <Document
+                file={fileUrl}
+                onLoadSuccess={onDocumentLoadSuccess}
+                onLoadError={onDocumentLoadError}
+                loading={<div className="text-center text-blue-600 dark:text-blue-400">Loading PDF…</div>}
+              >
+                <Page
+                  pageNumber={pageNumber}
+                  width={scale * 794}
+                  className="shadow-xl rounded-lg bg-white dark:bg-blue-900"
+                  renderTextLayer={false}
+                />
+              </Document>
+            )}
+          </div>
         )}
       </main>
 
