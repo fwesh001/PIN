@@ -2,8 +2,7 @@ import Navigation from '@/components/Navigation';
 import { BookIcon, FileIcon, InboxIcon, UserIcon } from '@/components/Icons';
 import ArchiveFilters from '@/components/ArchiveFilters';
 import Footer from '@/components/Footer';
-import { getPublishedSubmissions, searchSubmissions } from '@/lib/ojs/submissions';
-import { getPublishedIssues, extractVolumes } from '@/lib/ojs/issues';
+import { getAllMockArticles, mockIssue } from '@/lib/mockData';
 import type { NormalizedArticle } from '@/lib/ojs/types';
 
 /** OJS portal base URL for authenticated workflows (submit, login). */
@@ -32,52 +31,64 @@ interface ArchivePageProps {
 export default async function ArchivePage({ searchParams }: ArchivePageProps) {
   const { q, volume, keyword } = await searchParams;
 
-  // ── Fetch from OJS (graceful empty states if OJS is offline) ──
-  let articles: NormalizedArticle[] = [];
-  let volumes: number[] = [];
-  let topKeywords: string[] = [];
+  // ── Local mocked archive data ──
+  const fetched = getAllMockArticles();
 
-  try {
-    // 1. Fetch published submissions (optionally filtered by search phrase).
-    const fetched = q && q.trim().length > 0
-      ? await searchSubmissions(q.trim(), 100)
-      : await getPublishedSubmissions({ count: 100 });
+  let articles: NormalizedArticle[] = fetched;
+  const volumes: number[] = Array.from(
+    new Set(
+      fetched
+        .map((article) => Number(article.volume))
+        .filter((vol) => Number.isFinite(vol)),
+    ),
+  ).sort((a, b) => b - a);
 
-    // 2. Client-side keyword tag filter (OJS search is phrase-based).
-    articles = keyword && keyword.trim().length > 0
-      ? fetched.filter((a) =>
-          a.keywords.some((k) => k.toLowerCase() === keyword.trim().toLowerCase()),
-        )
-      : fetched;
+  // Search query matches title, abstract, keywords, and author names.
+  if (q && q.trim().length > 0) {
+    const query = q.trim().toLowerCase();
+    articles = articles.filter((article) => {
+      const authorText = article.authors
+        .map((author) => `${author.name} ${author.affiliation ?? ''}`)
+        .join(' ')
+        .toLowerCase();
 
-    // 3. Volume filter (match against the article's volume field).
-    if (volume && /^\d+$/.test(volume.trim())) {
-      const volNum = parseInt(volume.trim(), 10);
-      articles = articles.filter((a) => Number(a.volume) === volNum);
-    }
-
-    // 4. Published issues → distinct volumes for the sidebar.
-    const issues = await getPublishedIssues(100);
-    volumes = extractVolumes(issues);
-
-    // 5. Keyword frequency cloud (top 20).
-    const keywordCounts = new Map<string, number>();
-    for (const article of fetched) {
-      for (const kw of article.keywords) {
-        keywordCounts.set(kw, (keywordCounts.get(kw) ?? 0) + 1);
-      }
-    }
-    topKeywords = [...keywordCounts.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 20)
-      .map(([kw]) => kw);
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('OJS API error (archive):', err);
-    articles = [];
-    volumes = [];
-    topKeywords = [];
+      return (
+        article.title.toLowerCase().includes(query) ||
+        article.abstract.toLowerCase().includes(query) ||
+        article.keywords.some((kw) => kw.toLowerCase().includes(query)) ||
+        authorText.includes(query)
+      );
+    });
   }
+
+  // Exact keyword filter.
+  if (keyword && keyword.trim().length > 0) {
+    const keywordQuery = keyword.trim().toLowerCase();
+    articles = articles.filter((article) =>
+      article.keywords.some((k) => k.toLowerCase() === keywordQuery),
+    );
+  }
+
+  // Volume filter.
+  if (volume && /^\d+$/.test(volume.trim())) {
+    const volNum = parseInt(volume.trim(), 10);
+    articles = articles.filter((article) => Number(article.volume) === volNum);
+  }
+
+  // Keyword frequency cloud (top 20) from the mocked article set.
+  const keywordCounts = new Map<string, number>();
+  for (const article of fetched) {
+    for (const kw of article.keywords) {
+      keywordCounts.set(kw, (keywordCounts.get(kw) ?? 0) + 1);
+    }
+  }
+  const topKeywords = [...keywordCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 20)
+    .map(([kw]) => kw);
+
+  // Use the current mocked issue as the archive context if needed in future.
+  void mockIssue;
 
   return (
     <div className="min-h-screen bg-blue-50 dark:bg-blue-950 transition-colors">
@@ -112,21 +123,21 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
           <section className="flex-1">
             {/* Search feedback header */}
             <div className="mb-6">
-              <p className="text-sm text-blue-700 dark:text-blue-300">
+              <p className="text-sm text-blue-900 dark:text-blue-100">
                 {articles.length === 0 ? (
-                  <span>No articles match your criteria.</span>
+                  <span className="text-blue-800 dark:text-blue-200">No articles match your criteria.</span>
                 ) : (
                   <span>
                     Showing{' '}
-                    <span className="font-semibold text-blue-950">
+                    <span className="font-semibold text-blue-950 dark:text-white">
                       {articles.length}
                     </span>{' '}
                     article{articles.length !== 1 ? 's' : ''}
-                    {q && (
+                    {q && q.trim().length > 0 && (
                       <span>
                         {' '}
                         matching &ldquo;
-                        <span className="font-semibold text-blue-950">{q}</span>
+                        <span className="font-semibold text-blue-950 dark:text-white">{q}</span>
                         &rdquo;
                       </span>
                     )}
@@ -134,14 +145,14 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
                       <span>
                         {' '}
                         in Volume{' '}
-                        <span className="font-semibold text-blue-950">{volume}</span>
+                        <span className="font-semibold text-blue-950 dark:text-white">{volume}</span>
                       </span>
                     )}
                     {keyword && !q && (
                       <span>
                         {' '}
                         tagged &ldquo;
-                        <span className="font-semibold text-blue-950">{keyword}</span>
+                        <span className="font-semibold text-blue-950 dark:text-white">{keyword}</span>
                         &rdquo;
                       </span>
                     )}
