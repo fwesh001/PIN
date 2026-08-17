@@ -2,12 +2,8 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import Logo from '@/components/Logo';
-import MobileNav from '@/components/MobileNav';
+import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-
-const OJS_URL = process.env.NEXT_PUBLIC_OJS_URL ?? 'https://pinjournal.org';
 
 type TabKey = 'reviewers' | 'authors';
 
@@ -43,52 +39,7 @@ function GuidelinesContent() {
 
   return (
     <div className="min-h-screen flex flex-col bg-blue-50 dark:bg-blue-950 transition-colors">
-      {/* Navigation Header */}
-      <header className="w-full bg-white dark:bg-blue-950 border-b border-blue-100 dark:border-blue-900 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 sm:h-20">
-          <Link href="/" className="flex flex-col md:flex-row items-center gap-1.5 md:gap-3">
-            <Logo className="h-10 w-auto sm:h-12" />
-            <span className="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-blue-900 dark:text-blue-100 text-center md:text-left leading-none md:leading-tight">
-              Polymer Institute of Nigeria
-            </span>
-          </Link>
-
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-blue-900 dark:text-blue-200">
-            <a
-              href="/archive"
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors underline-offset-4 hover:underline"
-            >
-              Current Issue
-            </a>
-            <a
-              href="/archive"
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors underline-offset-4 hover:underline"
-            >
-              Archive
-            </a>
-            <a
-              href="/news-events"
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors underline-offset-4 hover:underline"
-            >
-              News & Events
-            </a>
-            <a
-              href={`${OJS_URL}/submission/wizard`}
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors underline-offset-4 hover:underline"
-            >
-              Submit Manuscript
-            </a>
-            <a
-              href={`${OJS_URL}/login`}
-              className="px-4 py-2 rounded-md border border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
-            >
-              Login
-            </a>
-          </nav>
-
-          <MobileNav />
-        </div>
-      </header>
+      <Navigation />
 
       {/* Hero Header */}
       <section className="w-full bg-blue-50 dark:bg-blue-950/40 py-12 sm:py-16 px-4 sm:px-6 lg:px-8"
