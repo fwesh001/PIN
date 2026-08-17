@@ -1,8 +1,9 @@
 import Link from 'next/link';
-import { GlobeIcon, ScalesIcon, IdBadgeIcon, BookIcon, FileIcon, EyeIcon, DownloadIcon } from '@/components/Icons';
+import { GlobeIcon, ScalesIcon, IdBadgeIcon, DownloadIcon } from '@/components/Icons';
 import Logo from '@/components/Logo';
 import MobileNav from '@/components/MobileNav';
 import Footer from '@/components/Footer';
+import PublishedArticlesGrid from '@/components/PublishedArticlesGrid';
 import {
   mockIssue,
   mockFeaturedArticles,
@@ -269,117 +270,7 @@ export default function HomePage() {
             Latest research from the NJPST archive
           </p>
 
-          {/* Empty State */}
-          {publishedArticles.length === 0 && (
-            <div className="border border-dashed border-blue-200 dark:border-blue-800 rounded-2xl p-12 text-center">
-              <p className="text-lg font-semibold text-blue-900 dark:text-blue-200 mb-2 flex items-center justify-center gap-2">
-                <BookIcon className="w-6 h-6 text-blue-400" /> No published articles yet.
-              </p>
-              <p className="text-sm text-blue-500 dark:text-blue-400">
-                The inaugural volume is currently being compiled. Check back
-                soon for the first published papers.
-              </p>
-            </div>
-          )}
-
-          {/* Article Card Grid */}
-          {publishedArticles.length > 0 && (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {publishedArticles.map((article) => (
-                <article
-                  key={article.id}
-                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-blue-200 dark:border-blue-800 bg-white dark:bg-blue-900/30 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1"
-                >
-                  {/* Document-style header — cover photo background with bold centered file icon */}
-                  <div className="relative flex h-36 items-center justify-center overflow-hidden border-b border-blue-100 bg-cover bg-center dark:border-blue-800"
-                    style={{ backgroundImage: `url('/uploads/article.jpg')` }}
-                  >
-                    {/* Dark legibility overlay so the icon stays visible over the photo */}
-                    <div className="absolute inset-0 bg-blue-950/40 dark:bg-blue-950/60" aria-hidden="true" />
-
-                    {/* Bold document icon, centered */}
-                    <div className="relative z-10 flex h-20 w-20 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-900/20 ring-4 ring-white/70 dark:ring-blue-950/40">
-                      <FileIcon className="h-10 w-10" strokeWidth={2.5} />
-                    </div>
-                  </div>
-
-                  {/* Card body */}
-                  <div className="flex flex-1 flex-col p-5">
-                    {/* Title */}
-                    <h3 className="text-base font-bold leading-snug text-blue-950 dark:text-blue-100">
-                      <a
-                        href={`/article/${article.id}`}
-                        className="transition-colors hover:text-blue-600 dark:hover:text-blue-400"
-                      >
-                        {article.title}
-                      </a>
-                    </h3>
-
-                    {/* Author & Affiliation */}
-                    <p className="mt-2 text-sm text-blue-700 dark:text-blue-300">
-                      <span className="font-semibold">{article.authors[0]?.name}</span>
-                      {article.authors[0]?.affiliation && (
-                        <span className="text-blue-500 dark:text-blue-400">
-                          {' '}
-                          · {article.authors[0].affiliation}
-                        </span>
-                      )}
-                    </p>
-
-                    {/* Publication date & views */}
-                    <p className="mt-2 flex items-center gap-3 text-xs text-blue-400 dark:text-blue-500">
-                      <span>
-                        Published{' '}
-                        {new Date(article.datePublished ?? '').toLocaleDateString('en-NG', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                        })}
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <EyeIcon className="h-3.5 w-3.5" />
-                        {(article.views ?? 0).toLocaleString()} views
-                      </span>
-                    </p>
-
-                    {/* Keyword pills */}
-                    {article.keywords.length > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-1.5">
-                        {article.keywords.slice(0, 3).map((keyword: string, index: number) => (
-                          <span
-                            key={index}
-                            className="inline-block rounded-full bg-blue-100 px-2.5 py-0.5 text-[11px] font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-300"
-                          >
-                            {keyword}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Action row — icons at the bottom (larger screens) */}
-                    <div className="mt-auto flex flex-wrap items-center gap-2 pt-5">
-                      <a
-                        href={`/viewer/${article.id}`}
-                        aria-label="Read article"
-                        className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition-all hover:bg-blue-700 active:scale-95 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
-                      >
-                        <EyeIcon className="h-4 w-4" /> Read
-                      </a>
-                      <a
-                        href={article.pdfUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="Download PDF"
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 px-3 py-2 text-xs font-semibold text-blue-700 transition-all hover:bg-blue-100 active:scale-95 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900"
-                      >
-                        <DownloadIcon className="h-4 w-4" /> Download
-                      </a>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
+          <PublishedArticlesGrid articles={publishedArticles} />
 
           {/* Feed footer */}
           {publishedArticles.length > 0 && (
