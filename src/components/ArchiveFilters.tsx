@@ -23,6 +23,7 @@ export default function ArchiveFilters({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [searchValue, setSearchValue] = useState(q);
+  const [searchField, setSearchField] = useState(searchParams.get('field') || 'all');
 
   const updateParam = useCallback(
     (key: string, value: string) => {
@@ -43,9 +44,24 @@ export default function ArchiveFilters({
   const handleSubmit = useCallback(
     (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      updateParam('q', searchValue);
+      
+      const params = new URLSearchParams(searchParams.toString());
+      if (searchValue.trim().length > 0) {
+        params.set('q', searchValue.trim());
+      } else {
+        params.delete('q');
+      }
+
+      if (searchField !== 'all') {
+        params.set('field', searchField);
+      } else {
+        params.delete('field');
+      }
+
+      const query = params.toString();
+      router.push(query ? `${pathname}?${query}` : pathname);
     },
-    [searchValue, updateParam],
+    [searchValue, searchField, pathname, router, searchParams],
   );
 
   const clearFilters = useCallback(() => {
@@ -71,22 +87,41 @@ export default function ArchiveFilters({
         >
           Search
         </label>
-        <div className="relative">
-          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-400 dark:text-blue-500" />
-          <input
-            id="archive-search"
-            type="text"
-            value={searchValue}
-            onChange={(event) => setSearchValue(event.target.value)}
-            placeholder="Title, abstract, keyword..."
-            className="w-full rounded-xl border border-blue-200 bg-white py-2.5 pl-10 pr-3 text-sm text-blue-950 placeholder:text-blue-300 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-blue-800 dark:bg-blue-900 dark:text-blue-100 dark:placeholder:text-blue-500"
-          />
+        
+        <div className="flex flex-col sm:flex-row gap-2">
+          {/* Field Selector */}
+          <select
+            value={searchField}
+            onChange={(e) => setSearchField(e.target.value)}
+            className="w-full sm:w-32 rounded-xl border border-blue-200 bg-white py-2.5 px-3 text-sm text-blue-950 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-blue-800 dark:bg-blue-900 dark:text-blue-100"
+          >
+            <option value="all">All Fields</option>
+            <option value="title">Title</option>
+            <option value="author">Author</option>
+            <option value="keyword">Keyword</option>
+            <option value="abstract">Abstract</option>
+          </select>
+
+          {/* Search Input */}
+          <div className="relative flex-1">
+            <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-400 dark:text-blue-500" />
+            <input
+              id="archive-search"
+              type="text"
+              value={searchValue}
+              onChange={(event) => setSearchValue(event.target.value)}
+              placeholder="Search..."
+              className="w-full rounded-xl border border-blue-200 bg-white py-2.5 pl-10 pr-3 text-sm text-blue-950 placeholder:text-blue-300 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-blue-800 dark:bg-blue-900 dark:text-blue-100 dark:placeholder:text-blue-500"
+            />
+          </div>
         </div>
+
         <button
           type="submit"
-          className="w-full rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
         >
-          Apply Search
+          <SearchIcon className="h-4 w-4" />
+          Search
         </button>
       </form>
 
