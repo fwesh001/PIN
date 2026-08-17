@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { NormalizedArticle } from '@/lib/ojs/types';
 import { BookIcon, DownloadIcon, EyeIcon, FileIcon } from '@/components/Icons';
 
@@ -10,6 +10,16 @@ interface PublishedArticlesGridProps {
 
 export default function PublishedArticlesGrid({ articles }: PublishedArticlesGridProps) {
   const [activeArticle, setActiveArticle] = useState<NormalizedArticle | null>(null);
+
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setActiveArticle(null);
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   return (
     <>
@@ -123,68 +133,74 @@ export default function PublishedArticlesGrid({ articles }: PublishedArticlesGri
       )}
 
       {activeArticle && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-blue-950/70 p-4" role="dialog" aria-modal="true" aria-label="Article abstract">
-          <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl dark:bg-blue-900 border border-blue-100 dark:border-blue-800">
-            <div className="mb-4 flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-blue-500 dark:text-blue-400">Abstract</p>
-                <h3 className="mt-1 text-lg font-bold text-blue-950 dark:text-blue-100">{activeArticle.title}</h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveArticle(null)}
-                className="rounded-md px-2 py-1 text-blue-600 hover:bg-blue-100 dark:text-blue-300 dark:hover:bg-blue-800"
-                aria-label="Close abstract modal"
-              >
-                ✕
-              </button>
+        <div
+          ref={overlayRef}
+          onMouseDown={(e) => {
+            if (e.target === overlayRef.current) setActiveArticle(null);
+          }}
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-blue-950/70 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Article abstract"
+        >
+          <div className="w-full max-w-2xl rounded-2xl bg-white p-0 shadow-2xl dark:bg-blue-900 border border-blue-100 dark:border-blue-800 overflow-hidden">
+            {/* Header with background for title/authors */}
+            <div className="px-6 py-4 bg-blue-600 dark:bg-blue-800 text-white">
+              <p className="text-xs font-semibold uppercase tracking-wider text-blue-100/90">Abstract</p>
+              <h3 className="mt-1 text-lg font-extrabold">{activeArticle.title}</h3>
+              <p className="mt-1 text-sm opacity-90">{activeArticle.authors.map((a) => `${a.name}${a.affiliation ? ` — ${a.affiliation}` : ''}`).join(', ')}</p>
             </div>
 
-            <div className="text-sm text-blue-700 dark:text-blue-300 mb-4">
-              <p className="font-semibold">Authors</p>
-              <p className="mt-1">{activeArticle.authors.map((a) => `${a.name}${a.affiliation ? ` — ${a.affiliation}` : ''}`).join(', ')}</p>
-              <div className="mt-3 grid grid-cols-2 gap-3 text-xs text-blue-500 dark:text-blue-400">
+            <div className="p-6">
+              <div className="mb-4 grid grid-cols-2 gap-3 text-sm">
                 <div>
-                  <p className="font-medium">Published</p>
-                  <p className="mt-1">{new Date(activeArticle.datePublished ?? '').toLocaleDateString('en-NG', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
+                  <p className="font-mono font-bold text-blue-500">Published</p>
+                  <p className="mt-1 text-blue-700 dark:text-blue-200">{new Date(activeArticle.datePublished ?? '').toLocaleDateString('en-NG', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
                 </div>
                 <div>
-                  <p className="font-medium">Views</p>
-                  <p className="mt-1">{(activeArticle.views ?? 0).toLocaleString()}</p>
+                  <p className="font-mono font-bold text-blue-500">Views</p>
+                  <p className="mt-1 text-blue-700 dark:text-blue-200">{(activeArticle.views ?? 0).toLocaleString()}</p>
                 </div>
               </div>
 
               {activeArticle.keywords?.length > 0 && (
-                <div className="mt-3">
-                  <p className="font-medium">Keywords</p>
-                  <div className="mt-1 flex flex-wrap gap-2">
+                <div className="mb-4">
+                  <p className="font-mono font-bold text-blue-500">Keywords</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
                     {activeArticle.keywords.map((k, i) => (
                       <span key={i} className="text-xs px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200">{k}</span>
                     ))}
                   </div>
                 </div>
               )}
-            </div>
 
-            <p className="text-sm leading-relaxed text-blue-800 dark:text-blue-200">
-              {activeArticle.abstract?.trim() || 'Abstract will be available soon for this article.'}
-            </p>
+              <p className="text-sm leading-relaxed text-blue-800 dark:text-blue-200">
+                {activeArticle.abstract?.trim() || 'Abstract will be available soon for this article.'}
+              </p>
 
-            <div className="mt-6 flex flex-wrap items-center gap-2">
-              <a
-                href={`/viewer/${activeArticle.id}`}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-blue-700 active:scale-95 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
-              >
-                <EyeIcon className="h-4 w-4" /> Read
-              </a>
-              <a
-                href={activeArticle.pdfUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 transition-all hover:bg-blue-100 active:scale-95 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-800"
-              >
-                <DownloadIcon className="h-4 w-4" /> Download
-              </a>
+              <div className="mt-6 flex flex-wrap items-center gap-2">
+                <a
+                  href={`/viewer/${activeArticle.id}`}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-blue-700 active:scale-95 dark:bg-blue-400 dark:text-blue-950 dark:hover:bg-blue-300"
+                >
+                  <EyeIcon className="h-4 w-4" /> Read
+                </a>
+                <a
+                  href={activeArticle.pdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 transition-all hover:bg-blue-100 active:scale-95 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-800"
+                >
+                  <DownloadIcon className="h-4 w-4" /> Download
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setActiveArticle(null)}
+                  className="ml-auto rounded-md px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-blue-800"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>
