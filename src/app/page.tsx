@@ -1,8 +1,9 @@
 import Link from 'next/link';
-import { GlobeIcon, ScalesIcon, IdBadgeIcon, DownloadIcon } from '@/components/Icons';
+import { DownloadIcon } from '@/components/Icons';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import PublishedArticlesGrid from '@/components/PublishedArticlesGrid';
+import { RECENT_NEWS, UPCOMING_EVENTS } from '@/lib/newsEvents';
 import {
   mockIssue,
   mockFeaturedArticles,
@@ -31,6 +32,19 @@ export default function HomePage() {
   const latestIssue = mockIssue;
   const featuredArticles = mockPublishedArticles;
   const publishedArticles = mockPublishedArticles;
+
+  const tickerItems = [
+    ...RECENT_NEWS.map((n) => ({
+      href: `/news-events#news-${n.id}`,
+      label: n.category,
+      title: n.title,
+    })),
+    ...UPCOMING_EVENTS.map((e) => ({
+      href: `/news-events#event-${e.id}`,
+      label: 'event',
+      title: e.title,
+    })),
+  ];
 
   return (
     <div className="min-h-screen flex flex-col bg-blue-50 dark:bg-blue-950 transition-colors">
@@ -84,21 +98,35 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          3. TRUST BANNER BAR
+          3. NEWS & EVENTS TICKER
           ══════════════════════════════════════════════════════════════ */}
-      <div className="w-full border-y border-blue-100 dark:border-blue-900 bg-white dark:bg-blue-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs sm:text-sm font-semibold text-blue-800 dark:text-blue-300 tracking-wide">
-          <span className="flex items-center gap-1.5">
-            <GlobeIcon className="w-4 h-4" /> Gold Open Access
+      <section className="w-full border-y border-blue-100 dark:border-blue-900 bg-white dark:bg-blue-950 overflow-hidden" aria-label="News and events ticker">
+        <div className="flex items-stretch">
+          <span className="flex shrink-0 items-center bg-blue-600 dark:bg-blue-500 px-4 sm:px-6 text-[11px] sm:text-xs font-bold uppercase tracking-widest text-white">
+            News &amp; Events
           </span>
-          <span className="flex items-center gap-1.5">
-            <ScalesIcon className="w-4 h-4" /> Double-Blind Peer Reviewed
-          </span>
-          <span className="flex items-center gap-1.5">
-            <IdBadgeIcon className="w-4 h-4" /> Crossref DOI Enabled
-          </span>
+          <div className="relative flex-1 overflow-hidden">
+            <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
+              {[0, 1].map((half) => (
+                <div key={half} className="flex items-center gap-10 pr-10 py-3" aria-hidden={half === 1}>
+                  {tickerItems.map((item, idx) => (
+                    <a
+                      key={`${half}-${idx}`}
+                      href={item.href}
+                      className="group flex items-center gap-2.5 whitespace-nowrap text-xs sm:text-sm text-blue-800 dark:text-blue-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                    >
+                      <span className="rounded-full bg-blue-100 dark:bg-blue-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300">
+                        {item.label}
+                      </span>
+                      <span className="font-medium group-hover:underline">{item.title}</span>
+                    </a>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* ══════════════════════════════════════════════════════════════
           4. FEATURED VOLUME SPLIT-CARD
