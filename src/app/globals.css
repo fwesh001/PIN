@@ -36,3 +36,55 @@ h2 {
   font-weight: 800;
   text-shadow: 0 2px 6px rgb(85, 125, 245);
 }
+
+/* ── Custom scrollbar (WebKit / Blink: Chrome, Edge, Safari, Opera) ── */
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1571ea;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #93c5fd;
+  border-radius: 9999px;
+  border: 2px solid #eff6ff;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #60a5fa;
+}
+
+::-webkit-scrollbar-corner {
+  background: #1d70db;
+}
+
+/* Dark mode scrollbar */
+html.dark ::-webkit-scrollbar-track {
+  background: #172554;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #1e40af;
+  border-color: #172554;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #1d4ed8;
+}
+
+html.dark ::-webkit-scrollbar-corner {
+  background: #172554;
+}
+
+/* ── Custom scrollbar (Firefox) ── */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #93c5fd #eff6ff;
+}
+
+html.dark {
+  scrollbar-color: #1e40af #172554;
+}

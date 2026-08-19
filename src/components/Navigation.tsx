@@ -86,7 +86,7 @@ export default function Navigation() {
           className="flex items-center gap-3 md:gap-4 shrink-0"
         >
           <Logo className="h-10 w-auto sm:h-12" />
-          <span className="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-blue-900 dark:text-blue-100 text-left leading-snug max-w-[220px] md:max-w-none whitespace-nowrap md:whitespace-normal">
+          <span className="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-blue-900 dark:text-blue-100 text-left leading-snug max-w-[200px] sm:max-w-[160px] md:max-w-none whitespace-normal">
             Nigerian Journal of Polymer Science &amp; Technology
           </span>
         </Link>
@@ -174,7 +174,7 @@ export default function Navigation() {
           {/* Login — styled as a pill button */}
           <a
             href="#"
-            className="px-4 py-2 rounded-md border border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors duration-200 font-semibold"
+            className="px-4 py-2 rounded-md border border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors duration-200 font-semibold "
           >
             Login
           </a>

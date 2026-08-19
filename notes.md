@@ -338,4 +338,4 @@ add seacrh to the navbar for larger screens and a search icon for smaller screen
 
 Replace  3. TRUST BANNER BAR with news and events (the topic or header) with an animation right - left, hover effect pauses the animation and clicking on the news and events section should open the news and events page to that new or event.
 
-plan to make the LHS of nav bar compact 
+plan to add a thick line under each head in the footer this will have two colors line gradient effect (left side color1 and right side color2) and the line should be centered under each head in the footer section

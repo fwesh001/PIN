@@ -13,12 +13,12 @@ function FooterLink({ href, children }: { href: string; children: ReactNode }) {
       {/* Left-side line origin */}
       <span
         aria-hidden="true"
-        className="absolute bottom-0 left-1/2 w-1/2 h-px bg-white/70 rounded-full origin-right scale-x-0 transition-transform duration-300 group-hover:scale-x-100"
+        className="absolute bottom-0 left-1/2 w-1/2 h-px bg-white/100 rounded-full origin-right scale-x-0 transition-transform duration-300 group-hover:scale-x-100"
       />
       {/* Right-side line origin */}
       <span
         aria-hidden="true"
-        className="absolute bottom-0 right-1/2 w-1/2 h-px bg-white/70 rounded-full origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"
+        className="absolute bottom-0 right-1/2 w-1/2 h-px bg-white/100 rounded-full origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"
       />
     </>
   );
@@ -39,6 +39,24 @@ function FooterLink({ href, children }: { href: string; children: ReactNode }) {
   );
 }
 
+/**
+ * Footer column heading with a thick blue→cyan gradient underline,
+ * centered beneath the title.
+ */
+function FooterHeading({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex flex-col  gap-2">
+      <h4 className="text-sm font-bold text-white uppercase tracking-wider">
+        {children}
+      </h4>
+      <span
+        aria-hidden="true"
+        className="h-1 w-25  bg-gradient-to-r from-cyan-300 to-bg-slate-950"
+      />
+    </div>
+  );
+}
+
 export default function Footer() {
   return (
     <footer className="w-full bg-slate-950 text-blue-200 mt-auto">
@@ -46,9 +64,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-10">
           {/* Column 1 — About */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">
+            <FooterHeading>
               About NJPST
-            </h4>
+            </FooterHeading>
             <p className="text-sm leading-relaxed text-blue-300">
               The Nigerian Journal of Polymer Science and Technology is
               the open-access academic journal of the Polymer Institute
@@ -58,9 +76,9 @@ export default function Footer() {
 
           {/* Column 2 — Editorial Board */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">
+            <FooterHeading>
               Editorial Board
-            </h4>
+            </FooterHeading>
             <ul className="space-y-1.5 text-sm text-blue-300">
               <li>
                 <FooterLink href="/editorial-board">Editor-in-Chief</FooterLink>
@@ -73,9 +91,9 @@ export default function Footer() {
 
           {/* Column 3 — Reviewer Resources */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">
+            <FooterHeading>
               For Reviewers
-            </h4>
+            </FooterHeading>
             <ul className="space-y-1.5 text-sm text-blue-300">
               <li>
                 <FooterLink href="/guidelines?tab=reviewers">
@@ -87,9 +105,9 @@ export default function Footer() {
 
           {/* Column 4 — Author Resources */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">
+            <FooterHeading>
               For Authors
-            </h4>
+            </FooterHeading>
             <ul className="space-y-1.5 text-sm text-blue-300">
               <li>
                 <FooterLink href="/dashboard/author/submit">
@@ -109,9 +127,9 @@ export default function Footer() {
 
           {/* Column 5 — Indexing */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">
+            <FooterHeading>
               Indexing &amp; Compliance
-            </h4>
+            </FooterHeading>
             <ul className="space-y-1.5 text-sm text-blue-300">
               <li>Google Scholar</li>
               <li>Scopus (in progress)</li>
@@ -123,9 +141,9 @@ export default function Footer() {
 
           {/* Column 6 — Contact Us */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">
+            <FooterHeading>
               Contact Us
-            </h4>
+            </FooterHeading>
             <ul className="space-y-1.5 text-sm text-blue-300">
               <li>
                 <FooterLink href="/contact">Address</FooterLink>
@@ -141,9 +159,9 @@ export default function Footer() {
 
           {/* Column 7 — News & Events */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">
+            <FooterHeading>
               News &amp; Events
-            </h4>
+            </FooterHeading>
             <ul className="space-y-1.5 text-sm text-blue-300">
               <li>
                 <FooterLink href="/news-events">Recent News</FooterLink>
@@ -156,9 +174,9 @@ export default function Footer() {
 
           {/* Column 8 — Policies */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">
+            <FooterHeading>
               Policies
-            </h4>
+            </FooterHeading>
             <ul className="space-y-1.5 text-sm text-blue-300">
               <li>
                 <FooterLink href="/policies?tab=scope">
@@ -176,9 +194,9 @@ export default function Footer() {
 
           {/* Column 9 — Guidelines */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">
+            <FooterHeading>
               Guidelines
-            </h4>
+            </FooterHeading>
             <ul className="space-y-1.5 text-sm text-blue-300">
               <li>
                 <FooterLink href="/guidelines?tab=reviewers">
