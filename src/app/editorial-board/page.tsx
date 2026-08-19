@@ -2,49 +2,57 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 
 const EDITOR_IN_CHIEF = {
-  name: 'Prof. Michael A. Omoighe',
+  name: 'Magaji Ladan, PhD.',
   title: 'Editor-in-Chief',
-  affiliation: 'Department of Polymer Chemistry, Federal University of Technology, Owerri, Nigeria',
-  email: 'm.omoighe@polymerinstitute.org.ng',
   image: '/avatar-placeholder.png',
-  bio: 'Specialist in Advanced Polymer Composites and Thermosetting Resins with over 25 years of research and academic excellence.',
 };
 
 const BOARD_MEMBERS = [
   {
-    name: 'Prof. Elizabeth Ngozi',
-    title: 'Associate Editor (Physical Chemistry)',
-    affiliation: 'Department of Chemistry, University of Ibadan, Nigeria',
+    name: 'Shehu Habibu, PhD.',
+    title: 'Technical Secretary, Editorial Board',
     image: '/avatar-placeholder.png',
   },
   {
-    name: 'Dr. Ibrahim Babangida',
-    title: 'Technical Reviewer (Polymer Processing)',
-    affiliation: 'Department of Chemical Engineering, Ahmadu Bello University, Zaria, Nigeria',
+    name: 'Prof. Peter O. Nkeonye',
+    title: 'Associate Editor',
+    affiliation: 'Department of Textile Science and Technology, A.B.U., Zaria',
     image: '/avatar-placeholder.png',
   },
   {
-    name: 'Prof. Chukwudi K. Alao',
-    title: 'Editorial Board Member (Nanomaterials)',
-    affiliation: 'Department of Pure and Industrial Chemistry, University of Nigeria, Nsukka, Nigeria',
+    name: 'Prof. Stephen S. Ochigbo',
+    title: 'Associate Editor',
+    affiliation: 'Department of Chemistry, FUT, Minna, Niger State',
     image: '/avatar-placeholder.png',
   },
   {
-    name: "Dr. Fatima Yar'Adua",
-    title: 'Associate Editor (Biopolymers & Biomaterials)',
-    affiliation: 'Department of Chemistry, Bayero University Kano, Nigeria',
+    name: 'Prof. Issac O. Igwe',
+    title: 'Associate Editor',
+    affiliation: 'Department of Polymer and Textile Engineering, FUT Owerri, Imo State',
     image: '/avatar-placeholder.png',
   },
   {
-    name: 'Prof. Olufemi Adebayo',
-    title: 'Technical Reviewer (Polymer Blends & Composites)',
-    affiliation: 'Department of Chemistry, University of Lagos, Nigeria',
+    name: 'Prof. Shehu Umar',
+    title: 'Associate Editor',
+    affiliation: 'Department of Metallurgical and Materials Engineering, A.B.U., Zaria',
     image: '/avatar-placeholder.png',
   },
   {
-    name: 'Dr. Amara Eke',
-    title: 'Editorial Board Member (Industrial Chemistry)',
-    affiliation: 'Department of Industrial Chemistry, Nnamdi Azikiwe University, Awka, Nigeria',
+    name: 'Dr. Amali Ejila',
+    title: 'Associate Editor',
+    affiliation: 'Nigerian Institute of Leather and Science Technology (NILEST), Zaria',
+    image: '/avatar-placeholder.png',
+  },
+  {
+    name: 'Dr. Clement Gonah',
+    title: 'Associate Editor',
+    affiliation: 'Glass Technology Unit, Department of Industrial Design, A.B.U., Zaria',
+    image: '/avatar-placeholder.png',
+  },
+  {
+    name: 'Prof. Peter S. Dass',
+    title: 'Associate Editor',
+    affiliation: 'Department of Chemistry, Modibbo Adama University of Technology, Yola',
     image: '/avatar-placeholder.png',
   },
 ];
@@ -95,20 +103,6 @@ export default function EditorialBoardPage() {
                   {EDITOR_IN_CHIEF.title}
                 </p>
               </div>
-              
-              <div className="space-y-2 text-sm text-blue-800 dark:text-blue-300">
-                <p className="font-medium">{EDITOR_IN_CHIEF.affiliation}</p>
-                <p className="italic text-blue-600/80 dark:text-blue-400/80">{EDITOR_IN_CHIEF.bio}</p>
-              </div>
-              
-              <div className="pt-2">
-                <a 
-                  href={`mailto:${EDITOR_IN_CHIEF.email}`} 
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  ✉ Contact Editor
-                </a>
-              </div>
             </div>
           </div>
         </section>
@@ -116,7 +110,7 @@ export default function EditorialBoardPage() {
         {/* Board Members Section */}
         <section className="space-y-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-blue-950 dark:text-blue-100 border-b border-blue-100 dark:border-blue-850 pb-3">
-            Editorial Board Members
+            Technical Secretary &amp; Associate Editors
           </h2>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
