@@ -8,7 +8,6 @@ import {
   mockFeaturedArticles,
   mockPublishedArticles,
   MOCK_ISSUE_PDF,
-  MOCK_ARTICLE_PDF,
 } from '@/lib/mockData';
 
 /**
