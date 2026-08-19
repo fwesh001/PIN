@@ -163,7 +163,7 @@ export default function HomePage() {
 
                 {featuredArticles.length > 0 ? (
                   <ul className="space-y-5">
-                    {featuredArticles.map((article, idx: number) => (
+                    {featuredArticles.slice(0, 4).map((article, idx: number) => (
                       <li
                         key={article.id}
                         className="flex gap-4 items-start group"
