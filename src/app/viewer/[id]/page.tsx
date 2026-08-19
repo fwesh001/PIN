@@ -10,7 +10,7 @@ export default function ViewerPage() {
   
   // Handle special case: current-issue opens the featured issue PDF
   if (id === 'current-issue') {
-    return <PdfViewer fileUrl={MOCK_ISSUE_PDF} title="Current Issue — Volume 15, Issue 2" />;
+    return <PdfViewer fileUrl={MOCK_ISSUE_PDF} title="Current Issue — Volume 20, Issue 1" />;
   }
   
   const article = getMockArticleById(id);
