@@ -9,6 +9,7 @@ import { SearchIcon } from '@/components/Icons';
 
 /** Sub-links that live inside the "Journal" dropdown. */
 const JOURNAL_LINKS = [
+  { href: '/archive', label: 'Archive' },
   { href: '/news-events', label: 'News & Events' },
   { href: '/editorial-board', label: 'Editorial Board' },
   { href: '/guidelines', label: 'Guidelines' },
@@ -77,21 +78,21 @@ export default function Navigation() {
 
   return (
     <header className="w-full bg-white dark:bg-blue-950 border-b border-blue-100 dark:border-blue-900 sticky top-0 z-50 backdrop-blur-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 sm:h-20">
+      <div className="w-full px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 sm:h-20">
 
         {/* ── Brand ─────────────────────────────────────────────── */}
         <Link
           href="/"
-          className="flex items-center gap-2 md:gap-3 shrink-0"
+          className="flex items-center gap-3 md:gap-4 shrink-0"
         >
           <Logo className="h-10 w-auto sm:h-12" />
-          <span className="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-blue-900 dark:text-blue-100 text-left leading-tight max-w-[200px] sm:max-w-none">
+          <span className="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-blue-900 dark:text-blue-100 text-left leading-snug max-w-[220px]">
             Nigerian Journal of Polymer Science &amp; Technology
           </span>
         </Link>
 
         {/* ── Desktop Nav ───────────────────────────────────────── */}
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium" aria-label="Main navigation">
+        <nav className="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium md:ml-4 lg:ml-8 shrink-0" aria-label="Main navigation">
           {pathname !== '/' && (
             <Link href="/" className={desktopLinkClass('/')}>
               Home
@@ -101,12 +102,13 @@ export default function Navigation() {
             Current Issue
           </Link>
 
-          <Link href="/archive" className={desktopLinkClass('/archive')}>
-            Archive
-          </Link>
-
-          {/* Journal dropdown */}
-          <div className="relative" ref={dropdownRef}>
+          {/* Journal dropdown (opens on hover) */}
+          <div
+            className="relative"
+            ref={dropdownRef}
+            onMouseEnter={() => setDropdownOpen(true)}
+            onMouseLeave={() => setDropdownOpen(false)}
+          >
             <button
               type="button"
               onClick={() => setDropdownOpen((v) => !v)}
@@ -182,7 +184,7 @@ export default function Navigation() {
               name="q"
               placeholder="Search articles…"
               aria-label="Search articles"
-              className="w-44 xl:w-56 rounded-md border border-blue-200 dark:border-blue-700 bg-blue-50/50 dark:bg-blue-900/60 py-2 pl-9 pr-3 text-sm text-blue-950 dark:text-blue-100 placeholder-blue-400 dark:placeholder-blue-500 outline-none focus:ring-2 focus:ring-blue-600"
+              className="w-36 xl:w-48 rounded-md border border-blue-200 dark:border-blue-700 bg-blue-50/50 dark:bg-blue-900/60 py-2 pl-9 pr-3 text-sm text-blue-950 dark:text-blue-100 placeholder-blue-400 dark:placeholder-blue-500 outline-none focus:ring-2 focus:ring-blue-600"
             />
             <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-400 dark:text-blue-500 pointer-events-none" />
           </form>
@@ -246,10 +248,6 @@ export default function Navigation() {
               )}
               <Link href="/viewer/current-issue" className={mobileLinkClass('/viewer/current-issue')}>
                 Current Issue
-              </Link>
-
-              <Link href="/archive" className={mobileLinkClass('/archive')}>
-                Archive
               </Link>
 
               {/* Journal section */}
