@@ -333,3 +333,5 @@ add btn for abstract in the Published Articles card section of the homepage[abst
 mock up data for the abstract of the article in the modal for now until the backend is working, and the modal should include the name of the article, the author(s) name(s) affiliation(s) date published,views,keywords and the abstract of the article.
 
 the search archive what does it query now 
+
+add seacrh to the navbar for larger screens and a search icon for smaller screens, when the user clicks on the search icon it should open a modal with a search input field and a search btn, when the user clicks on the search btn it should query the backend for articles matching the search term and display the results in the modal.
