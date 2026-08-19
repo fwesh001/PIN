@@ -86,7 +86,7 @@ export default function Navigation() {
           className="flex items-center gap-3 md:gap-4 shrink-0"
         >
           <Logo className="h-10 w-auto sm:h-12" />
-          <span className="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-blue-900 dark:text-blue-100 text-left leading-snug max-w-[220px]">
+          <span className="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-blue-900 dark:text-blue-100 text-left leading-snug max-w-[220px] md:max-w-none whitespace-nowrap md:whitespace-normal">
             Nigerian Journal of Polymer Science &amp; Technology
           </span>
         </Link>
@@ -139,24 +139,26 @@ export default function Navigation() {
             {dropdownOpen && (
               <div
                 role="menu"
-                className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-52 rounded-xl bg-white dark:bg-blue-950 border border-blue-100 dark:border-blue-800 shadow-xl shadow-blue-900/10 py-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
+                className="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-52 z-50"
               >
-                {JOURNAL_LINKS.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    role="menuitem"
-                    className={[
-                      'block px-4 py-2.5 text-sm transition-colors',
-                      'hover:bg-blue-50 dark:hover:bg-blue-900',
-                      isActive(item.href)
-                        ? 'font-bold text-blue-700 dark:text-blue-300 underline underline-offset-4 decoration-blue-500'
-                        : 'text-blue-900 dark:text-blue-200',
-                    ].join(' ')}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
+                <div className="rounded-xl bg-white dark:bg-blue-950 border border-blue-100 dark:border-blue-800 shadow-xl shadow-blue-900/10 py-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+                  {JOURNAL_LINKS.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      role="menuitem"
+                      className={[
+                        'block px-4 py-2.5 text-sm transition-colors',
+                        'hover:bg-blue-50 dark:hover:bg-blue-900',
+                        isActive(item.href)
+                          ? 'font-bold text-blue-700 dark:text-blue-300 underline underline-offset-4 decoration-blue-500'
+                          : 'text-blue-900 dark:text-blue-200',
+                      ].join(' ')}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -178,7 +180,7 @@ export default function Navigation() {
           </a>
 
           {/* Desktop search — submits to the archive search page */}
-          <form action="/archive" method="GET" className="relative">
+          <form action="/archive" method="GET" className="relative -mr-2">
             <input
               type="search"
               name="q"
