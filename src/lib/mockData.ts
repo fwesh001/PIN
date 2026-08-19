@@ -97,6 +97,71 @@ export const mockArticles: NormalizedArticle[] = [
     year: 2025,
     views: 574,
   },
+  {
+    id: '305',
+    title:
+      'Studies on Some Properties of Snail Shell and Cassava Peel Powdered Polypropylene Composites',
+    abstract:
+      'This study investigated some properties of snail and cassava peel-filled polypropylene composites. The snail shell and cassava peel powders of particle sizes (90µm) were incorporated into the polymer polypropylene matrix in a ratio of 14:3:3, 15:3:2 and 16:3:1 for polypropylene/snail shell/cassava peel; 17:3, 18:2 and 19:1 for polypropylene/cassava peel and 17:3, 18:2, 19:1 for polypropylene/snail shell powdered composites. The mixtures were prepared using injection molding machines at a hopper temperature of 200°C and at a rotor speed of 60rpm and at an average thickness of 3.00mm in accordance with American Society of Testing and Materials Standard, to determine the mechanical properties of the composite. The rates of bio-degradation and water absorption of the composites were also investigated for 120 days and 42 days respectively. Results showed that the tensile properties, the flexural properties as well as impact strength of the composite decreased with reference to the same properties of the neat polypropylene. However, the tensile properties, flexural properties and impact strength to these composites increased with increasing filler content loading. Again, from the results, the rate of bio-degradation and water absorption increased with increasing filler content loading. The results showed that the incorporation of cassava peel and snail shell powders into polypropylene matrix decreased the mechanical properties of the composite while the rate of bio-degradation and water absorption increased with time.',
+    keywords: ['Polypropylene', 'Biodegradation', 'Snail', 'Cassava', 'Composite', 'Absorption'],
+    authors: [
+      { name: 'Oriji O. G', affiliation: 'Department of Pure & Industrial Chemistry, University of Port Harcourt' },
+      { name: 'Ochia C. A', affiliation: 'Department of Pure & Industrial Chemistry, University of Port Harcourt' },
+    ],
+    pdfUrl: pdf('Studies on Some Properties of Snail Shell and Cassava Peel Powdered Polypropylene Composites.pdf'),
+    datePublished: '2025-02-18',
+    volume: 20,
+    issueNumber: 1,
+    year: 2025,
+    views: 410,
+  },
+  {
+    id: '306',
+    title:
+      'The Morphological, Thermal and Mechanical Properties of Ground Rubber Tire (GRT) Filled Waste High-Density Polyethylene (rHDPE)',
+    abstract:
+      'This research investigates the morphological, thermal and mechanical properties of ground rubber tire (GRT) filled waste high-density polyethylene (rHDPE), showing the effect of variable particle sizes. In the adopted methodology, the samples were prepared through melt mixing (using two-roll mill machine), tailed by compression molding, different blends of variable particle sizes were prepared (150 µm, 212 µm, 300 µm and 425 µm) and a control sample of 150g rHDPE was also prepared. The morphology, thermal properties and mechanical properties of the developed composites are analyzed using Scanning electron microscopy (SEM), Dynamic Mechanical Analysis (DMA), tensile and flexural tests respectively. The SEM result shows some inhomogeneity and poor dispersion of the GTR filler which attributed to improper stress transfer along the interface and formation of cracks in the developed polymer composited, causing reduction in mechanical strength. A more homogenous morphology with reduced defects was observed upon increasing the filler content from 150µm to 212µm, leading to an improved interfacial adhesion with the HDPE matrix. Further increase (from 212µm to 300µm) gave more homogenous micrograph but addition of GTR particles up 425µm led to rough surface. For thermal behavior, as the different sizes of the GRT filler were introduced into the HDPE matrix, the storage modulus decreases, attributed to the material softening caused by the soft rubber particles which result in lower rigidity except for sample made with 150 µm. Incorporation of 300 µm particles of GTR results in higher rigidity, which similarly gave more homogenous micrograph with uniform dispersion. The result also shows that, increasing the GTR particles causes decline in the flexural stress and modulus, having similar trend with the tensile modulus. The elongation at break also shows a decline with addition of the different particle sizes of the filler, with the exception of sample 300µm.',
+    keywords: [
+      'Morphological',
+      'Ground Rubber Tire (GRT)',
+      'Waste High-Density Polyethylene (rHDPE)',
+      'Scanning Electron Microscopy (SEM)',
+      'Dynamic Mechanical Analysis (DMA)',
+    ],
+    authors: [
+      { name: 'Abdulkadir S. A', affiliation: 'Department of Polymer and Textile Engineering, Ahmadu Bello University, Zaria' },
+      { name: 'Zakari Y. I', affiliation: 'Department of Chemistry, Ahmadu Bello University, Zaria' },
+      { name: 'Clifford O. B', affiliation: 'Department of Pure and Industrial Chemistry, Prince Abubakar Audu University Anyigba, Kogi State' },
+      { name: 'Mohammed I. A', affiliation: 'Department of Polymer and Textile Engineering, Ahmadu Bello University, Zaria' },
+      { name: 'Yusuf O. L', affiliation: 'Department of Polymer and Textile Engineering, Ahmadu Bello University, Zaria' },
+      { name: 'Ojobo L. O', affiliation: 'Department of Polymer and Textile Engineering, Ahmadu Bello University, Zaria' },
+    ],
+    pdfUrl: pdf('The Morphological, Thermal and Mechanical Properties of Ground Rubber Tire (GRT) Filled Waste High-Density Polyethylene (rHDPE).pdf'),
+    datePublished: '2025-01-18',
+    volume: 20,
+    issueNumber: 1,
+    year: 2025,
+    views: 333,
+  },
+  {
+    id: '307',
+    title:
+      'The Study of Polylactic Acid and Nanoclay on the Degradation Properties of Low-Density Polyethylene Composites',
+    abstract:
+      'A study was carried out to check the effect of using polylactic acid, Nano clay and glycerine as compatibilizer on the degradation property of virgin and waste low density Polyethylene which is the major component used in producing polyethylene bag. Virgin and waste samples of polyethylene, polylactic acid and Nano clay were obtained locally and compounded using the two-roll mix and the compression moulding machine to produce the composites. Moulded samples produced were cut accordingly using ASTM specification for the tests. Tests carried out included tensile, flexural, hardness, impact, water absorption, soil burial test. Results showed improved tensile, flexural, hardness strength as compared to the control sample (100% Virgin Polyethylene). The addition of polylactic acid, Nano clay and glycerine showed good interfacial bonding between the matrix and the fillers which improved the mechanical properties, water absorption and aided degradation during soil burial test. As the amount of filler content increased it affected the impact test due to the brittle nature of both Nano clay and polylactic acid.',
+    keywords: ['Low density polyethylene', 'Nano clay', 'polylactic acid', 'glycerine', 'degradation', 'physio-mechanical properties'],
+    authors: [
+      { name: 'I. A. Dina', affiliation: 'Department of Textile and Polymer Technology, Kaduna Polytechnic' },
+      { name: 'C. E. Gimba', affiliation: 'Department of Chemistry, Ahmadu Bello University, Zaria' },
+      { name: 'A. I. Okele', affiliation: 'Department of Polymer, Nigerian Institute of Leather & Science Technology (NILEST)' },
+    ],
+    pdfUrl: pdf('The Study of Polylactic Acid and Nanoclay on the Degradation Properties of Low-Density Polyethylene Composites.pdf'),
+    datePublished: '2025-02-10',
+    volume: 20,
+    issueNumber: 1,
+    year: 2025,
+    views: 247,
+  },
 ];
 
 export const mockFeaturedArticles: NormalizedArticle[] = mockArticles;
