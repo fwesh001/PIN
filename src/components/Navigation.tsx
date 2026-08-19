@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Logo from '@/components/Logo';
+import SearchModal from '@/components/SearchModal';
+import { SearchIcon } from '@/components/Icons';
 
 /** Sub-links that live inside the "Journal" dropdown. */
 const JOURNAL_LINKS = [
@@ -18,6 +20,7 @@ export default function Navigation() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   /** True when the given href matches the current route. */
@@ -171,27 +174,52 @@ export default function Navigation() {
           >
             Login
           </a>
+
+          {/* Desktop search — submits to the archive search page */}
+          <form action="/archive" method="GET" className="relative">
+            <input
+              type="search"
+              name="q"
+              placeholder="Search articles…"
+              aria-label="Search articles"
+              className="w-44 xl:w-56 rounded-md border border-blue-200 dark:border-blue-700 bg-blue-50/50 dark:bg-blue-900/60 py-2 pl-9 pr-3 text-sm text-blue-950 dark:text-blue-100 placeholder-blue-400 dark:placeholder-blue-500 outline-none focus:ring-2 focus:ring-blue-600"
+            />
+            <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-400 dark:text-blue-500 pointer-events-none" />
+          </form>
         </nav>
 
-        {/* ── Mobile Hamburger ──────────────────────────────────── */}
-        <button
-          type="button"
-          onClick={() => setMobileOpen((v) => !v)}
-          aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
-          aria-expanded={mobileOpen}
-          aria-controls="mobile-nav-panel"
-          className="md:hidden p-2 rounded-lg text-blue-900 dark:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600"
-        >
-          {mobileOpen ? (
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          ) : (
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          )}
-        </button>
+        {/* ── Mobile Actions ────────────────────────────────────── */}
+        <div className="flex items-center gap-1">
+          {/* Mobile search — opens the search modal */}
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
+            aria-label="Search articles"
+            className="md:hidden p-2 rounded-lg text-blue-900 dark:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600"
+          >
+            <SearchIcon className="w-6 h-6" />
+          </button>
+
+          {/* Mobile Hamburger */}
+          <button
+            type="button"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-nav-panel"
+            className="md:hidden p-2 rounded-lg text-blue-900 dark:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600"
+          >
+            {mobileOpen ? (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* ── Mobile Slide-Down Panel ────────────────────────────── */}
@@ -255,6 +283,8 @@ export default function Navigation() {
           </nav>
         </>
       )}
+    {/* ── Search Modal ─────────────────────────────────────── */}
+      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   );
 }
