@@ -143,7 +143,7 @@ export default function PublishedArticlesGrid({ articles }: PublishedArticlesGri
           aria-modal="true"
           aria-label="Article abstract"
         >
-          <div className="w-full max-w-2xl rounded-2xl bg-white p-0 shadow-2xl dark:bg-blue-900 border border-blue-100 dark:border-blue-800 overflow-hidden">
+          <div className="w-full max-w-sm sm:max-w-lg md:max-w-2xl rounded-2xl bg-white p-0 shadow-2xl dark:bg-blue-900 border border-blue-100 dark:border-blue-800 overflow-hidden max-h-[90vh] flex flex-col">
             {/* Header with background for title/authors */}
             <div className="px-6 py-4 bg-blue-600 dark:bg-blue-800 text-white">
               <p className="text-xs font-semibold uppercase tracking-wider text-blue-100/90">Abstract</p>
@@ -151,7 +151,7 @@ export default function PublishedArticlesGrid({ articles }: PublishedArticlesGri
               <p className="mt-1 text-sm opacity-90">{activeArticle.authors.map((a) => `${a.name}${a.affiliation ? ` — ${a.affiliation}` : ''}`).join(', ')}</p>
             </div>
 
-            <div className="p-6">
+            <div className="flex-1 min-h-0 overflow-y-auto p-6">
               <div className="mb-4 grid grid-cols-2 gap-3 text-sm">
                 <div>
                   <p className="font-mono font-bold text-blue-500">Published</p>
@@ -177,8 +177,11 @@ export default function PublishedArticlesGrid({ articles }: PublishedArticlesGri
               <p className="text-sm leading-relaxed text-blue-800 dark:text-blue-200">
                 {activeArticle.abstract?.trim() || 'Abstract will be available soon for this article.'}
               </p>
+            </div>
 
-              <div className="mt-6 flex flex-wrap items-center gap-2">
+            {/* Sticky action footer */}
+            <div className="shrink-0 border-t border-blue-100 dark:border-blue-800 bg-white dark:bg-blue-900 px-6 py-4">
+              <div className="flex flex-wrap items-center gap-2">
                 <a
                   href={`/viewer/${activeArticle.id}`}
                   className="inline-flex items-center gap-1.5 rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-600 active:scale-95 dark:bg-blue-500 dark:text-white dark:hover:bg-blue-400"
