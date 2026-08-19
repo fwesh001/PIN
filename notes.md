@@ -335,3 +335,7 @@ mock up data for the abstract of the article in the modal for now until the back
 the search archive what does it query now 
 
 add seacrh to the navbar for larger screens and a search icon for smaller screens, when the user clicks on the search icon it should open a modal with a search input field and a search btn, when the user clicks on the search btn it should query the backend for articles matching the search term and display the results in the modal.
+
+Replace  3. TRUST BANNER BAR with news and events (the topic or header) with an animation right - left, hover effect pauses the animation and clicking on the news and events section should open the news and events page to that new or event.
+
+plan to make the LHS of nav bar compact 
