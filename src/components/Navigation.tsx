@@ -180,7 +180,7 @@ export default function Navigation() {
           </a>
 
           {/* Desktop search — submits to the archive search page */}
-          <form action="/archive" method="GET" className="relative -mr-2">
+          <form action="/archive" method="GET" className="relative -mr-7">
             <input
               type="search"
               name="q"
