@@ -1,0 +1,75 @@
+/* ==========================================================================
+   OJS Custom Theme Stylesheet
+   Matches the "Nigerian Journal of Polymer Science & Technology" React Frontend
+   ========================================================================== */
+
+/* 1. Global Typography (Matches Tailwind's default sans-serif) */
+body, .pkp_structure_page {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1e3a8a; /* Tailwind blue-900 for default text */
+}
+
+/* 2. Header Styling (Matches your dark blue-950 sticky header) */
+.pkp_structure_head {
+    background-color: #172554; /* Tailwind blue-950 */
+    border-bottom: 1px solid #1e3a8a; /* Tailwind blue-900 */
+}
+
+/* Make header links white/light blue to contrast the dark background */
+.pkp_structure_head a {
+    color: #bfdbfe; /* Tailwind blue-200 */
+    font-weight: 500;
+}
+.pkp_structure_head a:hover {
+    color: #ffffff;
+}
+
+/* 3. Primary Buttons (Matches your Login / Submit buttons) */
+.pkp_button_primary, 
+button.pkp_button_primary, 
+a.pkp_button_primary {
+    background-color: #2563eb !important; /* Tailwind blue-600 */
+    border-color: #2563eb !important;
+    color: #ffffff !important;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.pkp_button_primary:hover, 
+button.pkp_button_primary:hover, 
+a.pkp_button_primary:hover {
+    background-color: #1d4ed8 !important; /* Tailwind blue-700 */
+}
+
+/* 4. Secondary Links and Buttons */
+a {
+    color: #2563eb; /* Tailwind blue-600 */
+    text-decoration: none;
+    transition: color 0.2s;
+}
+a:hover {
+    color: #1d4ed8; /* Tailwind blue-700 */
+}
+
+/* 5. Clean up the Footer */
+.pkp_structure_footer {
+    background-color: #f8fafc; /* Tailwind slate-50 */
+    border-top: 1px solid #e2e8f0; /* Tailwind slate-200 */
+    color: #1e3a8a; /* Tailwind blue-900 */
+}
+
+/* 6. Form Inputs */
+input[type="text"], 
+input[type="email"], 
+input[type="password"], 
+textarea, 
+select {
+    border-radius: 6px;
+    border: 1px solid #bfdbfe; /* Tailwind blue-200 */
+}
+input:focus, textarea:focus, select:focus {
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
