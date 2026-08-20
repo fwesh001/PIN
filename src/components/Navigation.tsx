@@ -163,9 +163,11 @@ export default function Navigation() {
             )}
           </div>
 
-          {/* Submit Manuscript — placeholder */}
+          {/* Submit Manuscript */}
           <a
-            href="#"
+            href="https://journal.zabdiel.me/njpst/submission/wizard"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-blue-900 dark:text-blue-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
           >
             Submit Manuscript
@@ -173,7 +175,9 @@ export default function Navigation() {
 
           {/* Login — styled as a pill button */}
           <a
-            href="#"
+            href="https://journal.zabdiel.me/njpst/login"
+            target="_blank"
+            rel="noopener noreferrer"
             className="px-4 py-2 rounded-md border border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors duration-200 font-semibold "
           >
             Login
@@ -267,13 +271,17 @@ export default function Navigation() {
               {/* Actions */}
               <div className="border-t border-blue-100 dark:border-blue-800 mt-2 pt-2 flex flex-col gap-2">
                 <a
-                  href="#"
+                  href="https://journal.zabdiel.me/njpst/submission/wizard"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="block rounded-lg px-3 py-3 text-sm text-blue-900 dark:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors"
                 >
                   Submit Manuscript
                 </a>
                 <a
-                  href="#"
+                  href="https://journal.zabdiel.me/njpst/login"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="block rounded-lg border border-blue-600 dark:border-blue-400 px-3 py-3 text-center text-sm font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors"
                 >
                   Login
